@@ -127,14 +127,17 @@ export const uiStatusText = {
 
 export const themeTokens = {
   colors: {
-    page: "#F7F8FA",
-    ink: "#0F172A",
-    muted: "#475569",
-    cyan: "#0891B2",
-    sky: "#0EA5E9",
-    gold: "#D6A84B",
-    journey: "#030712",
-    journeyCyan: "#22D3EE",
-    journeyGold: "#E8C66A",
+    page: "#EEF3F8",
+    surface: "#F8FAFC",
+    surfaceBlue: "#E3F2F7",
+    ink: "#07111F",
+    muted: "#526174",
+    dark: "#030A16",
+    darkSurface: "#071423",
+    cyan: "#1CC8E5",
+    brightCyan: "#38D9F5",
+    electricBlue: "#397BFF",
+    gold: "#D9A73E",
+    border: "rgba(18, 75, 105, 0.16)",
   },
 } as const;

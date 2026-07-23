@@ -11,6 +11,14 @@ interface HeroProps {
 
 export function Hero({ onOpenJourney }: HeroProps) {
   const content = siteContent.hero;
+  const parentheticalStart = content.name.indexOf("(");
+  const nameLines =
+    parentheticalStart > 0
+      ? [
+          content.name.slice(0, parentheticalStart),
+          content.name.slice(parentheticalStart),
+        ]
+      : [content.name];
   const reduceMotion = useReducedMotionPreference();
   const rawX = useMotionValue(0);
   const rawY = useMotionValue(0);
@@ -38,7 +46,13 @@ export function Hero({ onOpenJourney }: HeroProps) {
         transition={{ duration: 0.72, ease: [0.22, 1, 0.36, 1] }}
       >
         <p className="hero-eyebrow">{content.eyebrow}</p>
-        <h1 id="hero-title">{content.name}</h1>
+        <h1 id="hero-title" aria-label={content.name}>
+          {nameLines.map((line) => (
+            <span className="hero-name-line" key={line} aria-hidden="true">
+              {line}
+            </span>
+          ))}
+        </h1>
         <p className="hero-degree">{content.degrees}</p>
         <p className="hero-school">{content.school}</p>
         <p className="hero-intro">{content.introduction}</p>

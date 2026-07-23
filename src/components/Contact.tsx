@@ -1,4 +1,5 @@
 import { siteContent } from "../config/siteContent";
+import { formatSectionLabel } from "../utils/sectionLabel";
 import { SectionReveal } from "./SectionReveal";
 import { SocialLinks } from "./SocialLinks";
 
@@ -10,7 +11,9 @@ export function Contact() {
       <SectionReveal>
         <div className="shell contact-card">
           <div>
-            <p className="section-eyebrow">{content.eyebrow}</p>
+            <p className="section-eyebrow">
+              {formatSectionLabel(content.eyebrow)}
+            </p>
             <h2>{content.title}</h2>
             <p>{content.introduction}</p>
           </div>

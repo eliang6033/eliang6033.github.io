@@ -1,6 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import { siteContent } from "../config/siteContent";
 import { travelStats } from "../data/travel";
+import { formatSectionLabel } from "../utils/sectionLabel";
 import { SectionReveal } from "./SectionReveal";
 
 interface JourneyPreviewProps {
@@ -17,7 +18,7 @@ export function JourneyPreview({ onOpenJourney }: JourneyPreviewProps) {
           <div className="journey-card">
             <div className="journey-card__copy">
               <p className="section-eyebrow section-eyebrow--dark">
-                {content.eyebrow}
+                {formatSectionLabel(content.eyebrow)}
               </p>
               <h2>{content.title}</h2>
               <p>{content.subtitle}</p>
