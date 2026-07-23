@@ -19,6 +19,9 @@
   --color-journey: var(--color-dark);
   --color-journeyCyan: var(--color-brightCyan);
   --color-journeyGold: var(--color-gold);
+  --grid-line-hero: rgba(18, 75, 105, 0.029);
+  --grid-line-projects: rgba(18, 75, 105, 0.024);
+  --grid-line-soft: rgba(18, 75, 105, 0.01);
   --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   --shadow-soft: 0 18px 55px
     color-mix(in srgb, var(--color-ink) 8%, transparent);
@@ -1839,8 +1842,8 @@ a.social-link:hover {
       color-mix(in srgb, var(--color-cyan) 10%, transparent),
       transparent 27%
     ),
-    linear-gradient(rgba(18, 75, 105, 0.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(18, 75, 105, 0.045) 1px, transparent 1px),
+    linear-gradient(var(--grid-line-hero) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line-hero) 1px, transparent 1px),
     var(--color-page);
   background-size: auto, 72px 72px, 72px 72px, auto;
   transform: translateX(-50%);
@@ -2071,6 +2074,24 @@ a.social-link:hover {
     var(--color-page);
 }
 
+.section--about::before,
+.section--hobbies::before {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background:
+    linear-gradient(var(--grid-line-soft) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line-soft) 1px, transparent 1px);
+  background-size: 96px 96px;
+  mask-image: linear-gradient(to bottom, transparent, black 18%, black 82%, transparent);
+  pointer-events: none;
+}
+
+.section--about > *,
+.section--hobbies > * {
+  position: relative;
+}
+
 .about-layout {
   grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
   align-items: center;
@@ -2180,11 +2201,11 @@ a.social-link:hover {
   position: absolute;
   inset: 0;
   content: "";
-  opacity: 0.7;
+  opacity: 0.65;
   background:
     radial-gradient(circle at 12% 18%, rgba(57, 123, 255, 0.07), transparent 28%),
-    linear-gradient(rgba(18, 75, 105, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(18, 75, 105, 0.035) 1px, transparent 1px);
+    linear-gradient(var(--grid-line-projects) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line-projects) 1px, transparent 1px);
   background-size: auto, 80px 80px, 80px 80px;
   pointer-events: none;
 }
@@ -2437,6 +2458,10 @@ a.social-link:hover {
 }
 
 .hobby-card--blue {
+  background: #e5e9f6;
+}
+
+.hobby-card--violet {
   background: #e5e9f6;
 }
 

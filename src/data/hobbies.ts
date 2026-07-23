@@ -28,17 +28,17 @@ export const hobbies: Hobby[] = [
     accent: "rust",
   },
   {
-    title: "Sci-Fi Movies",
-    description:
-      "Exploring imagined futures, strange worlds, and the ideas behind them.",
-    icon: "film",
-    accent: "blue",
-  },
-  {
     title: "Gaming",
     description:
       "Competitive games, esports, hardware, and interactive worlds.",
     icon: "gamepad",
     accent: "violet",
+  },
+  {
+    title: "Sci-Fi Movies",
+    description:
+      "Exploring imagined futures, strange worlds, and the ideas behind them.",
+    icon: "film",
+    accent: "blue",
   },
 ];
