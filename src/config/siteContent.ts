@@ -2,10 +2,10 @@ import type { SocialLink } from "../types/content";
 
 export const siteContent = {
   seo: {
-    title: "Qifeng(Eli) Liang — Research & Journey",
+    title: "Eli Liang - Homepage",
     description:
       "Qifeng(Eli) Liang is a Mathematics–Computer Science and Cognitive Science student exploring AI, robotics, embodied intelligence, and the real world.",
-    socialTitle: "Qifeng(Eli) Liang — Research & Journey",
+    socialTitle: "Eli Liang - Homepage",
     socialDescription:
       "A researcher exploring intelligent systems and the real world—one project and one journey at a time.",
     socialImage: "/og-v2.png",
