@@ -1197,6 +1197,98 @@ a.social-link:hover {
   letter-spacing: 0.05em;
 }
 
+.journey-key-chapters,
+.journey-importance-legend {
+  position: absolute;
+  z-index: 7;
+  left: max(24px, env(safe-area-inset-left));
+  font-family: var(--font-mono);
+  backdrop-filter: blur(10px);
+}
+
+.journey-key-chapters {
+  bottom: max(58px, calc(env(safe-area-inset-bottom) + 58px));
+  display: flex;
+  padding: 5px 9px 5px 10px;
+  align-items: center;
+  gap: 11px;
+  border-left: 1px solid color-mix(in srgb, var(--color-journeyGold) 48%, transparent);
+  background: color-mix(in srgb, var(--color-journey) 58%, transparent);
+}
+
+.journey-key-chapters__label {
+  color: color-mix(in srgb, var(--color-journeyGold) 78%, white);
+  font-size: 0.54rem;
+  font-weight: 650;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.journey-key-chapters__links {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  white-space: nowrap;
+}
+
+.journey-key-chapters__links > span {
+  color: color-mix(in srgb, white 24%, transparent);
+  font-size: 0.58rem;
+}
+
+.journey-key-chapters button {
+  min-height: 28px;
+  padding: 0 3px;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  color: color-mix(in srgb, white 56%, transparent);
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.59rem;
+  letter-spacing: 0.015em;
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.journey-key-chapters button:hover,
+.journey-key-chapters button[aria-pressed="true"] {
+  border-bottom-color: color-mix(
+    in srgb,
+    var(--color-journeyCyan) 68%,
+    transparent
+  );
+  color: white;
+}
+
+.journey-importance-legend {
+  bottom: max(22px, calc(env(safe-area-inset-bottom) + 22px));
+  display: flex;
+  padding: 4px 8px;
+  align-items: center;
+  gap: 14px;
+  color: color-mix(in srgb, white 48%, transparent);
+  background: color-mix(in srgb, var(--color-journey) 52%, transparent);
+  font-size: 0.56rem;
+  letter-spacing: 0.02em;
+}
+
+.journey-importance-legend > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.journey-importance-legend i {
+  width: 7px;
+  height: 7px;
+  border: 1px solid color-mix(in srgb, white 26%, transparent);
+  border-radius: 50%;
+  box-shadow: 0 0 7px color-mix(in srgb, currentColor 12%, transparent);
+}
+
 .journey-back {
   display: inline-flex;
   min-height: 42px;
@@ -1248,39 +1340,214 @@ a.social-link:hover {
   cursor: grabbing;
 }
 
-.globe-loading,
-.journey-mode--loading {
+.singapore-beacon {
+  display: flex;
+  min-height: 44px;
+  padding: 0;
+  align-items: center;
+  border: 0;
+  color: #f0cf72;
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  white-space: nowrap;
+  filter: drop-shadow(0 2px 7px color-mix(in srgb, black 48%, transparent));
+  transition: opacity 0.24s ease;
+  user-select: none;
+}
+
+.singapore-beacon__target {
+  position: relative;
   display: grid;
-  place-content: center;
-  justify-items: center;
-  gap: 18px;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  place-items: center;
+}
+
+.singapore-beacon__target::before,
+.singapore-beacon__target::after,
+.singapore-beacon__pulse {
+  position: absolute;
+  border-radius: 50%;
+  content: "";
+}
+
+.singapore-beacon__target::before {
+  width: 19px;
+  height: 19px;
+  border: 1px solid color-mix(in srgb, #f0cf72 84%, transparent);
+}
+
+.singapore-beacon__target::after {
+  width: 7px;
+  height: 7px;
+  background: #d9a73e;
+  box-shadow: 0 0 7px color-mix(in srgb, #f0cf72 36%, transparent);
+}
+
+.singapore-beacon__pulse {
+  width: 19px;
+  height: 19px;
+  border: 1px solid color-mix(in srgb, #f0cf72 60%, transparent);
+  animation: singapore-beacon-pulse 5.6s ease-out infinite;
+}
+
+@keyframes singapore-beacon-pulse {
+  0%,
+  48% {
+    opacity: 0.34;
+    transform: scale(1);
+  }
+
+  82%,
+  100% {
+    opacity: 0;
+    transform: scale(2.05);
+  }
+}
+
+.singapore-beacon--static .singapore-beacon__pulse {
+  display: none;
+  animation: none;
+}
+
+.singapore-beacon__label {
+  margin-left: -7px;
+  padding: 3px 5px;
+  border-left: 1px solid color-mix(in srgb, #f0cf72 42%, transparent);
+  color: color-mix(in srgb, #f0cf72 90%, white);
+  background: color-mix(in srgb, var(--color-journey) 68%, transparent);
+  font-size: 0.55rem;
+  letter-spacing: 0.045em;
+}
+
+.journey-mode--loading {
+  display: block;
+}
+
+.journey-loading-frame {
+  position: absolute;
+  inset: 5.5rem 0 0;
+  display: grid;
+  place-items: center;
 }
 
 .globe-loading {
+  display: grid;
+  place-content: center;
+  justify-items: center;
   height: 100%;
+  gap: 17px;
   color: color-mix(in srgb, white 54%, transparent);
 }
 
-.globe-loading > span,
-.journey-mode--loading > span {
-  width: 36px;
-  height: 36px;
+.globe-loading__wireframe {
+  position: relative;
+  width: 82px;
+  height: 82px;
+  overflow: hidden;
   border: 1px solid
-    color-mix(in srgb, var(--color-journeyCyan) 24%, transparent);
-  border-top-color: var(--color-journeyCyan);
+    color-mix(in srgb, var(--color-journeyCyan) 46%, transparent);
   border-radius: 50%;
-  animation: globe-loading 1s linear infinite;
+  background:
+    linear-gradient(
+      90deg,
+      transparent 49%,
+      color-mix(in srgb, var(--color-journeyCyan) 17%, transparent) 50%,
+      transparent 51%
+    ),
+    linear-gradient(
+      transparent 49%,
+      color-mix(in srgb, var(--color-journeyCyan) 17%, transparent) 50%,
+      transparent 51%
+    ),
+    radial-gradient(
+      circle at 34% 28%,
+      color-mix(in srgb, var(--color-journeyCyan) 9%, transparent),
+      transparent 58%
+    );
+  box-shadow:
+    inset 0 0 22px color-mix(in srgb, var(--color-journeyCyan) 6%, transparent),
+    0 0 26px color-mix(in srgb, var(--color-journeyCyan) 7%, transparent);
+  animation: globe-wireframe-drift 6.8s linear infinite;
 }
 
-.globe-loading p,
-.journey-mode--loading p {
+.globe-loading__wireframe::before,
+.globe-loading__wireframe::after,
+.globe-loading__wireframe i {
+  position: absolute;
+  content: "";
+}
+
+.globe-loading__wireframe::before {
+  inset: 14px -10px;
+  border-top: 1px solid
+    color-mix(in srgb, var(--color-journeyCyan) 22%, transparent);
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--color-journeyCyan) 22%, transparent);
+  border-radius: 50%;
+}
+
+.globe-loading__wireframe::after {
+  top: -8px;
+  bottom: -8px;
+  left: 24px;
+  width: 32px;
+  border-right: 1px solid
+    color-mix(in srgb, var(--color-journeyCyan) 26%, transparent);
+  border-left: 1px solid
+    color-mix(in srgb, var(--color-journeyCyan) 26%, transparent);
+  border-radius: 50%;
+}
+
+.globe-loading__wireframe i:first-child {
+  top: 21px;
+  left: 19px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--color-journeyCyan);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--color-journeyCyan) 48%, transparent);
+}
+
+.globe-loading__wireframe i:last-child {
+  right: 15px;
+  bottom: 22px;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--color-journeyGold);
+}
+
+.globe-loading p {
+  font-family: var(--font-mono);
   font-size: 0.76rem;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
 }
 
-@keyframes globe-loading {
+.globe-loading__retry {
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid
+    color-mix(in srgb, var(--color-journeyCyan) 34%, transparent);
+  border-radius: 7px;
+  color: white;
+  background: color-mix(in srgb, var(--color-journeyCyan) 8%, transparent);
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+}
+
+@keyframes globe-wireframe-drift {
   to {
     transform: rotate(1turn);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .globe-loading__wireframe {
+    animation: none;
   }
 }
 
@@ -1309,6 +1576,13 @@ a.social-link:hover {
 .globe-label span {
   color: var(--color-journeyCyan);
   font-size: 0.59rem;
+}
+
+.globe-label small {
+  max-width: 180px;
+  color: color-mix(in srgb, white 62%, transparent);
+  font-size: 0.58rem;
+  line-height: 1.35;
 }
 
 .country-panel {
@@ -1360,56 +1634,37 @@ a.social-link:hover {
 
 .country-panel__photo {
   position: relative;
-  display: grid;
-  min-height: 145px;
-  padding: 18px;
+  display: block;
+  min-height: 0;
+  padding: 0;
   overflow: hidden;
-  align-content: end;
+  aspect-ratio: 16 / 9;
   border: 1px solid color-mix(in srgb, white 8%, transparent);
   border-radius: 12px;
-  background:
-    radial-gradient(
-      circle at 75% 20%,
-      color-mix(in srgb, var(--color-journeyGold) 14%, transparent),
-      transparent 31%
-    ),
-    linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--color-journeyCyan) 13%, var(--color-journey)),
-      var(--color-journey)
-    );
+  background: var(--color-journey);
 }
 
 .country-panel__photo::after {
-  position: absolute;
-  top: -34px;
-  right: -21px;
-  width: 140px;
-  height: 140px;
-  border: 1px solid color-mix(in srgb, white 11%, transparent);
-  border-radius: 50%;
-  content: "";
-  box-shadow: 0 0 0 28px color-mix(in srgb, white 3%, transparent);
+  display: none;
 }
 
-.country-panel__photo > span {
-  position: absolute;
-  top: 18px;
-  left: 18px;
-  color: color-mix(in srgb, white 52%, transparent);
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-}
-
-.country-panel__photo p {
-  color: color-mix(in srgb, white 42%, transparent);
-  font-size: 0.65rem;
+.country-panel__photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .country-panel__header {
   position: relative;
+  min-height: 64px;
+  margin-top: 6px;
+  padding-right: 54px;
+}
+
+.country-panel--with-image .country-panel__header {
   margin-top: 25px;
+  padding-right: 0;
 }
 
 .country-panel__header p {
@@ -1658,6 +1913,23 @@ a.social-link:hover {
     display: none;
   }
 
+  .journey-key-chapters,
+  .journey-importance-legend {
+    right: max(10px, env(safe-area-inset-right));
+    left: max(10px, env(safe-area-inset-left));
+    justify-content: center;
+  }
+
+  .journey-key-chapters {
+    top: max(76px, calc(env(safe-area-inset-top) + 62px));
+    bottom: auto;
+  }
+
+  .journey-importance-legend {
+    top: max(114px, calc(env(safe-area-inset-top) + 100px));
+    bottom: auto;
+  }
+
   .journey-globe-stage {
     inset: 4.5rem 0 0;
   }
@@ -1690,6 +1962,30 @@ a.social-link:hover {
 }
 
 @media (max-width: 520px) {
+  .journey-key-chapters {
+    gap: 4px;
+    padding-inline: 6px;
+  }
+
+  .journey-key-chapters__label {
+    display: none;
+  }
+
+  .journey-key-chapters button {
+    min-height: 32px;
+    padding-inline: 2px;
+    font-size: 0.56rem;
+  }
+
+  .journey-importance-legend {
+    gap: 9px;
+    font-size: 0.52rem;
+  }
+
+  .singapore-beacon__label {
+    font-size: 0.52rem;
+  }
+
   .hero-actions,
   .button {
     width: 100%;

@@ -1,5 +1,5 @@
 import { AnimatePresence } from "framer-motion";
-import { lazy, Suspense, useCallback, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useState } from "react";
 import { About } from "./components/About";
 import { Contact } from "./components/Contact";
 import { Footer } from "./components/Footer";
@@ -8,16 +8,65 @@ import { Hobbies } from "./components/Hobbies";
 import { JourneyPreview } from "./components/JourneyPreview";
 import { Navbar } from "./components/Navbar";
 import { Projects } from "./components/Projects";
-import { siteContent, uiStatusText } from "./config/siteContent";
+import { JourneyLoadBoundary } from "./components/journey/JourneyLoadBoundary";
+import { JourneyLoadingShell } from "./components/journey/JourneyLoadingShell";
+import {
+  loadJourneyMode,
+  preloadJourneyExperience,
+} from "./utils/preloadJourney";
 
-const JourneyMode = lazy(
-  () => import("./components/journey/JourneyMode"),
-);
+type IdleWindow = Window &
+  typeof globalThis & {
+    requestIdleCallback?: (
+      callback: IdleRequestCallback,
+      options?: IdleRequestOptions,
+    ) => number;
+    cancelIdleCallback?: (handle: number) => void;
+  };
 
 export default function App() {
   const [journeyOpen, setJourneyOpen] = useState(false);
-  const openJourney = useCallback(() => setJourneyOpen(true), []);
+  const [JourneyModeComponent, setJourneyModeComponent] = useState(() =>
+    lazy(loadJourneyMode),
+  );
+  const openJourney = useCallback(() => {
+    preloadJourneyExperience();
+    setJourneyOpen(true);
+  }, []);
   const closeJourney = useCallback(() => setJourneyOpen(false), []);
+  const retryJourney = useCallback(() => {
+    setJourneyModeComponent(lazy(loadJourneyMode));
+  }, []);
+
+  useEffect(() => {
+    const idleWindow = window as IdleWindow;
+    let idleHandle: number | undefined;
+    let fallbackTimer: number | undefined;
+
+    const schedulePreload = () => {
+      if (idleWindow.requestIdleCallback) {
+        idleHandle = idleWindow.requestIdleCallback(
+          () => preloadJourneyExperience(),
+          { timeout: 5000 },
+        );
+        return;
+      }
+
+      fallbackTimer = window.setTimeout(preloadJourneyExperience, 1600);
+    };
+
+    if (document.readyState === "complete") {
+      schedulePreload();
+    } else {
+      window.addEventListener("load", schedulePreload, { once: true });
+    }
+
+    return () => {
+      window.removeEventListener("load", schedulePreload);
+      if (idleHandle !== undefined) idleWindow.cancelIdleCallback?.(idleHandle);
+      window.clearTimeout(fallbackTimer);
+    };
+  }, []);
 
   return (
     <>
@@ -29,10 +78,16 @@ export default function App() {
       >
         <Navbar />
         <main>
-          <Hero onOpenJourney={openJourney} />
+          <Hero
+            onOpenJourney={openJourney}
+            onPreloadJourney={preloadJourneyExperience}
+          />
           <About />
           <Projects />
-          <JourneyPreview onOpenJourney={openJourney} />
+          <JourneyPreview
+            onOpenJourney={openJourney}
+            onPreloadJourney={preloadJourneyExperience}
+          />
           <Hobbies />
           <Contact />
         </main>
@@ -41,20 +96,14 @@ export default function App() {
 
       <AnimatePresence>
         {journeyOpen ? (
-          <Suspense
-            fallback={
-              <div
-                className="journey-mode journey-mode--loading"
-                role="status"
-                aria-label={siteContent.journeyMode.ariaLabel}
-              >
-                <span aria-hidden="true" />
-                <p>{uiStatusText.loadingJourney}</p>
-              </div>
-            }
+          <JourneyLoadBoundary
+            onClose={closeJourney}
+            onRetry={retryJourney}
           >
-            <JourneyMode onClose={closeJourney} />
-          </Suspense>
+            <Suspense fallback={<JourneyLoadingShell onClose={closeJourney} />}>
+              <JourneyModeComponent onClose={closeJourney} />
+            </Suspense>
+          </JourneyLoadBoundary>
         ) : null}
       </AnimatePresence>
     </>

@@ -106,9 +106,13 @@ export const siteContent = {
 } as const;
 
 export const socialLinks: SocialLink[] = [
-  { label: "GitHub", href: "YOUR_GITHUB_URL", icon: "github" },
-  { label: "LinkedIn", href: "YOUR_LINKEDIN_URL", icon: "linkedin" },
-  { label: "Email", href: "mailto:YOUR_EMAIL", icon: "email" },
+  { label: "GitHub", href: "https://github.com/eliang6033", icon: "github" },
+  {
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/in/qifeng-liang/",
+    icon: "linkedin",
+  },
+  { label: "Email", href: "mailto:eliliang6033@gmail.com", icon: "email" },
   { label: "Resume", href: "YOUR_RESUME_URL", icon: "resume" },
 ];
 
@@ -118,8 +122,10 @@ export const socialLinks: SocialLink[] = [
  */
 export const uiStatusText = {
   loadingJourney: "Preparing the interactive globe…",
-  loadingCountries: "Loading world map…",
+  initializingGlobe: "Initializing globe…",
+  journeyLoadError: "The Journey interface could not be loaded.",
   countryDataError: "The world map could not be loaded.",
+  retryGlobe: "Retry",
   notVisited: "Not yet part of the journey.",
   linkPlaceholder: "Placeholder link — update it in src/config/siteContent.ts",
   unavailableLink: "This link is ready for your real URL.",

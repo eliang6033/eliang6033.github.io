@@ -1,27 +1,34 @@
-import type { Feature, FeatureCollection, Geometry } from "geojson";
-import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import Globe, { type GlobeMethods } from "react-globe.gl";
 import { MeshPhongMaterial } from "three";
-import { uiStatusText } from "../../config/siteContent";
 import {
+  loadCountryFeatures,
+  type CountryFeature,
+} from "../../data/countryGeometry";
+import {
+  singaporeBeacon,
+  travelImportanceVisuals,
   travelLocationByIsoCode,
-  travelLocationByNumericCode,
   travelMapContent,
+  unvisitedCountryColor,
 } from "../../data/travel";
-import type { TravelLocation } from "../../types/travel";
-
-interface CountryProperties {
-  name?: string;
-  isoA3?: string;
-  numericIsoCode?: string;
-}
-
-type CountryFeature = Feature<Geometry, CountryProperties> & {
-  capColor?: string;
-};
+import { useReducedMotionPreference } from "../../hooks/useReducedMotionPreference";
+import type {
+  TravelFocusRequest,
+  TravelImportance,
+  TravelLocation,
+} from "../../types/travel";
+import { GlobeLoadingState } from "./GlobeLoadingState";
 
 interface TravelGlobeProps {
   selectedLocation: TravelLocation | null;
+  focusRequest: TravelFocusRequest | null;
   onSelectLocation: (location: TravelLocation | null) => void;
   onUnavailableCountry: (countryName: string) => void;
 }
@@ -35,49 +42,71 @@ interface GlobeControls {
   removeEventListener: (event: string, listener: () => void) => void;
 }
 
+const importanceAltitude: Record<TravelImportance, number> = {
+  home: 0.015,
+  "extended-stay": 0.012,
+  visited: 0.009,
+};
+
 function asCountryFeature(value: object): CountryFeature {
   return value as CountryFeature;
 }
 
 function getFeatureCode(feature: CountryFeature) {
-  return (
-    feature.properties.isoA3 ??
-    feature.properties.numericIsoCode ??
-    String(feature.id ?? "")
-  );
+  return feature.properties.isoA3 ?? String(feature.id ?? "");
 }
 
 function getLocation(feature: CountryFeature) {
   const code = getFeatureCode(feature);
-  return (
-    travelLocationByIsoCode.get(code) ??
-    travelLocationByNumericCode.get(code) ??
-    null
-  );
+  return travelLocationByIsoCode.get(code) ?? null;
 }
 
 function getFeatureName(feature: CountryFeature) {
   return feature.properties.name ?? travelMapContent.unknownCountryName;
 }
 
-function getBaseCapColor(feature: CountryFeature) {
-  const location = getLocation(feature);
-  if (location?.status === "current") return "#d7c66f";
-  if (location?.status === "lived") return "#22b8cf";
-  if (location?.status === "visited") return "#1493ad";
-  return "#142235";
+function brightenHexColor(hexColor: string, amount: number) {
+  const color = hexColor.replace("#", "");
+  const channels = [0, 2, 4].map((index) =>
+    Number.parseInt(color.slice(index, index + 2), 16),
+  );
+  return `#${channels
+    .map((channel) =>
+      Math.round(channel + (255 - channel) * amount)
+        .toString(16)
+        .padStart(2, "0"),
+    )
+    .join("")}`;
+}
+
+function escapeHtml(value: string) {
+  return value.replace(
+    /[&<>"']/g,
+    (character) =>
+      ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;",
+      })[character] ?? character,
+  );
 }
 
 export function TravelGlobe({
   selectedLocation,
+  focusRequest,
   onSelectLocation,
   onUnavailableCountry,
 }: TravelGlobeProps) {
+  const reduceMotion = useReducedMotionPreference();
   const containerRef = useRef<HTMLDivElement>(null);
   const globeRef = useRef<GlobeMethods>();
+  const controlsRef = useRef<GlobeControls | null>(null);
   const resumeTimerRef = useRef<number>();
   const [countries, setCountries] = useState<CountryFeature[]>([]);
   const [loadError, setLoadError] = useState(false);
+  const [loadAttempt, setLoadAttempt] = useState(0);
   const [hoveredCode, setHoveredCode] = useState<string | null>(null);
   const [size, setSize] = useState({ width: 640, height: 640 });
   const globeMaterial = useMemo(
@@ -90,33 +119,53 @@ export function TravelGlobe({
       }),
     [],
   );
+  const beaconData = useMemo(() => [singaporeBeacon], []);
+
+  const clearResumeTimer = useCallback(() => {
+    window.clearTimeout(resumeTimerRef.current);
+    resumeTimerRef.current = undefined;
+  }, []);
+
+  const resumeRotationLater = useCallback(() => {
+    clearResumeTimer();
+    resumeTimerRef.current = window.setTimeout(() => {
+      if (controlsRef.current) controlsRef.current.autoRotate = true;
+    }, 7000);
+  }, [clearResumeTimer]);
+
+  const pauseRotation = useCallback(
+    (resumeLater: boolean) => {
+      if (controlsRef.current) controlsRef.current.autoRotate = false;
+      clearResumeTimer();
+      if (resumeLater) resumeRotationLater();
+    },
+    [clearResumeTimer, resumeRotationLater],
+  );
+
   useEffect(
     () => () => globeMaterial.dispose(),
     [globeMaterial],
   );
 
   useEffect(() => {
-    const controller = new AbortController();
+    let active = true;
+    setLoadError(false);
 
-    fetch("/data/countries.geojson", { signal: controller.signal })
-      .then((response) => {
-        if (!response.ok) throw new Error(response.statusText);
-        return response.json() as Promise<FeatureCollection<Geometry, CountryProperties>>;
+    loadCountryFeatures()
+      .then((features) => {
+        if (active) setCountries(features);
       })
-      .then((data) =>
-        setCountries(
-          data.features.map((feature) => ({
-            ...feature,
-            capColor: getBaseCapColor(feature),
-          })),
-        ),
-      )
-      .catch((error: unknown) => {
-        if (error instanceof DOMException && error.name === "AbortError") return;
-        setLoadError(true);
+      .catch(() => {
+        if (active) setLoadError(true);
       });
 
-    return () => controller.abort();
+    return () => {
+      active = false;
+    };
+  }, [loadAttempt]);
+
+  const retryCountryData = useCallback(() => {
+    setLoadAttempt((attempt) => attempt + 1);
   }, []);
 
   useEffect(() => {
@@ -138,64 +187,77 @@ export function TravelGlobe({
   }, []);
 
   useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handleBeaconClick = (event: MouseEvent) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      const beacon = target.closest<HTMLElement>("[data-country-beacon]");
+      if (!beacon) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+      const location = travelLocationByIsoCode.get(
+        beacon.dataset.countryBeacon ?? "",
+      );
+      if (location) onSelectLocation(location);
+    };
+
+    container.addEventListener("click", handleBeaconClick, true);
+    return () => container.removeEventListener("click", handleBeaconClick, true);
+  }, [onSelectLocation]);
+
+  useEffect(() => {
     const globe = globeRef.current;
     if (!globe || countries.length === 0) return;
 
     const controls = globe.controls() as unknown as GlobeControls;
+    controlsRef.current = controls;
     controls.autoRotate = true;
     controls.autoRotateSpeed = 0.36;
     controls.minDistance = 140;
     controls.maxDistance = 420;
 
-    const pauseRotation = () => {
-      controls.autoRotate = false;
-      window.clearTimeout(resumeTimerRef.current);
-    };
+    const handleInteractionStart = () => pauseRotation(false);
+    const handleInteractionEnd = () => resumeRotationLater();
 
-    const resumeRotationLater = () => {
-      window.clearTimeout(resumeTimerRef.current);
-      resumeTimerRef.current = window.setTimeout(() => {
-        controls.autoRotate = true;
-      }, 4200);
-    };
-
-    controls.addEventListener("start", pauseRotation);
-    controls.addEventListener("end", resumeRotationLater);
+    controls.addEventListener("start", handleInteractionStart);
+    controls.addEventListener("end", handleInteractionEnd);
 
     return () => {
-      window.clearTimeout(resumeTimerRef.current);
-      controls.removeEventListener("start", pauseRotation);
-      controls.removeEventListener("end", resumeRotationLater);
+      clearResumeTimer();
+      controls.removeEventListener("start", handleInteractionStart);
+      controls.removeEventListener("end", handleInteractionEnd);
+      if (controlsRef.current === controls) controlsRef.current = null;
     };
-  }, [countries]);
+  }, [clearResumeTimer, countries.length, pauseRotation, resumeRotationLater]);
 
   useEffect(() => {
-    if (!selectedLocation || !globeRef.current) return;
+    if (!focusRequest || !globeRef.current || countries.length === 0) return;
+    const location = travelLocationByIsoCode.get(focusRequest.isoCode);
+    if (!location) return;
+
+    pauseRotation(true);
     globeRef.current.pointOfView(
       {
-        lat: selectedLocation.coordinates.lat,
-        lng: selectedLocation.coordinates.lng,
-        altitude: 1.85,
+        lat: location.coordinates.lat,
+        lng: location.coordinates.lng,
+        altitude: location.isoCode === singaporeBeacon.isoCode ? 1.62 : 1.78,
       },
-      650,
+      reduceMotion ? 0 : 720,
     );
-  }, [selectedLocation]);
-
-  const ringData = useMemo(
-    () =>
-      Array.from(travelLocationByIsoCode.values())
-        .filter((location) => location.status === "current")
-        .map((location) => location.coordinates),
-    [],
-  );
+  }, [countries.length, focusRequest, pauseRotation, reduceMotion]);
 
   const polygonLabel = (object: object) => {
     const feature = asCountryFeature(object);
     const location = getLocation(feature);
-    const status = location
-      ? `${travelMapContent.countryLabelSeparator} ${location.years}`
+    if (!location) return "";
+
+    const highlight = location.highlight
+      ? `<small>${escapeHtml(location.highlight)}</small>`
       : "";
-    return `<div class="globe-label"><strong>${getFeatureName(feature)}</strong><span>${status}</span></div>`;
+    return `<div class="globe-label"><strong>${escapeHtml(location.name)}</strong><span>${travelMapContent.countryLabelSeparator} ${escapeHtml(location.year)}</span>${highlight}</div>`;
   };
 
   const handlePolygonClick = (object: object) => {
@@ -209,6 +271,39 @@ export function TravelGlobe({
     onUnavailableCountry(getFeatureName(feature));
   };
 
+  const createSingaporeBeacon = useCallback(() => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = `singapore-beacon${reduceMotion ? " singapore-beacon--static" : ""}`;
+    button.setAttribute("aria-label", travelMapContent.singaporeBeaconAriaLabel);
+    button.dataset.countryBeacon = singaporeBeacon.isoCode;
+
+    const target = document.createElement("span");
+    target.className = "singapore-beacon__target";
+    target.setAttribute("aria-hidden", "true");
+
+    const pulse = document.createElement("span");
+    pulse.className = "singapore-beacon__pulse";
+    target.append(pulse);
+
+    const label = document.createElement("span");
+    label.className = "singapore-beacon__label";
+    label.textContent = travelMapContent.singaporeBeaconLabel;
+
+    button.append(target, label);
+    return button;
+  }, [reduceMotion]);
+
+  const updateBeaconVisibility = useCallback(
+    (element: HTMLElement, isVisible: boolean) => {
+      element.style.opacity = isVisible ? "1" : "0";
+      element.style.pointerEvents = isVisible ? "auto" : "none";
+      element.setAttribute("aria-hidden", isVisible ? "false" : "true");
+      element.tabIndex = isVisible ? 0 : -1;
+    },
+    [],
+  );
+
   return (
     <div className="travel-globe" ref={containerRef}>
       {countries.length > 0 ? (
@@ -219,43 +314,73 @@ export function TravelGlobe({
           backgroundColor="rgba(0,0,0,0)"
           globeMaterial={globeMaterial}
           polygonsData={countries}
-          polygonCapColor="capColor"
+          polygonCapColor={(object) => {
+            const feature = asCountryFeature(object);
+            const location = getLocation(feature);
+            const baseColor = location
+              ? travelImportanceVisuals[location.importance].fill
+              : unvisitedCountryColor;
+            if (selectedLocation?.isoCode === location?.isoCode) {
+              return brightenHexColor(baseColor, 0.17);
+            }
+            if (hoveredCode === getFeatureCode(feature)) {
+              return brightenHexColor(baseColor, 0.09);
+            }
+            return baseColor;
+          }}
           polygonSideColor={() => "rgba(5, 12, 24, 0.82)"}
-          polygonStrokeColor={() => "rgba(123, 160, 190, 0.25)"}
+          polygonStrokeColor={(object) => {
+            const feature = asCountryFeature(object);
+            const location = getLocation(feature);
+            if (!location) return "rgba(69, 98, 126, 0.38)";
+            const borderColor = travelImportanceVisuals[location.importance].border;
+            if (selectedLocation?.isoCode === location.isoCode) {
+              return brightenHexColor(borderColor, 0.16);
+            }
+            if (hoveredCode === getFeatureCode(feature)) {
+              return brightenHexColor(borderColor, 0.07);
+            }
+            return borderColor;
+          }}
           polygonAltitude={(object) => {
             const feature = asCountryFeature(object);
             const location = getLocation(feature);
-            return selectedLocation?.isoCode === location?.isoCode
-              ? 0.022
-              : hoveredCode === getFeatureCode(feature)
-                ? 0.014
-              : location
-                ? 0.012
-                : 0.004;
+            const baseAltitude = location
+              ? importanceAltitude[location.importance]
+              : 0.004;
+            if (selectedLocation?.isoCode === location?.isoCode) {
+              return baseAltitude + 0.008;
+            }
+            if (hoveredCode === getFeatureCode(feature)) {
+              return baseAltitude + 0.003;
+            }
+            return baseAltitude;
           }}
           polygonLabel={polygonLabel}
           onPolygonHover={(object) =>
-            setHoveredCode(object ? getFeatureCode(asCountryFeature(object)) : null)
+            setHoveredCode(
+              object ? getFeatureCode(asCountryFeature(object)) : null,
+            )
           }
           onPolygonClick={handlePolygonClick}
           polygonsTransitionDuration={280}
+          htmlElementsData={beaconData}
+          htmlLat="latitude"
+          htmlLng="longitude"
+          htmlAltitude={() => 0.018}
+          htmlElement={createSingaporeBeacon}
+          htmlElementVisibilityModifier={updateBeaconVisibility}
+          htmlTransitionDuration={0}
           showAtmosphere
           atmosphereColor="#22d3ee"
           atmosphereAltitude={0.14}
-          ringsData={ringData}
-          ringLat={(point) => (point as { lat: number }).lat}
-          ringLng={(point) => (point as { lng: number }).lng}
-          ringColor={() => "#e8c66a"}
-          ringMaxRadius={2.6}
-          ringPropagationSpeed={0.55}
-          ringRepeatPeriod={1850}
           animateIn={false}
         />
       ) : (
-        <div className="globe-loading" role="status">
-          <span aria-hidden="true" />
-          <p>{loadError ? uiStatusText.countryDataError : uiStatusText.loadingCountries}</p>
-        </div>
+        <GlobeLoadingState
+          error={loadError}
+          onRetry={loadError ? retryCountryData : undefined}
+        />
       )}
     </div>
   );

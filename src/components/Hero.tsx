@@ -7,9 +7,10 @@ import { SocialLinks } from "./SocialLinks";
 
 interface HeroProps {
   onOpenJourney: () => void;
+  onPreloadJourney: () => void;
 }
 
-export function Hero({ onOpenJourney }: HeroProps) {
+export function Hero({ onOpenJourney, onPreloadJourney }: HeroProps) {
   const content = siteContent.hero;
   const parentheticalStart = content.name.indexOf("(");
   const nameLines =
@@ -58,7 +59,13 @@ export function Hero({ onOpenJourney }: HeroProps) {
         <p className="hero-intro">{content.introduction}</p>
 
         <div className="hero-actions">
-          <button className="button button--primary" type="button" onClick={onOpenJourney}>
+          <button
+            className="button button--primary"
+            type="button"
+            onClick={onOpenJourney}
+            onPointerEnter={onPreloadJourney}
+            onFocus={onPreloadJourney}
+          >
             <span>{content.primaryAction}</span>
             <ArrowRight aria-hidden="true" size={18} />
           </button>

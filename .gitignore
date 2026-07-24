@@ -29,3 +29,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 /dist/
+
+# local tool and editor caches
+/.vite/
+/.idea/
+/.vscode/

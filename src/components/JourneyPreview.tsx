@@ -1,4 +1,5 @@
 import { ArrowRight } from "lucide-react";
+import { useEffect, useRef } from "react";
 import { siteContent } from "../config/siteContent";
 import { travelStats } from "../data/travel";
 import { formatSectionLabel } from "../utils/sectionLabel";
@@ -6,13 +7,39 @@ import { SectionReveal } from "./SectionReveal";
 
 interface JourneyPreviewProps {
   onOpenJourney: () => void;
+  onPreloadJourney: () => void;
 }
 
-export function JourneyPreview({ onOpenJourney }: JourneyPreviewProps) {
+export function JourneyPreview({
+  onOpenJourney,
+  onPreloadJourney,
+}: JourneyPreviewProps) {
   const content = siteContent.journeyPreview;
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section || typeof IntersectionObserver === "undefined") return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        onPreloadJourney();
+        observer.disconnect();
+      },
+      { rootMargin: "500px 0px", threshold: 0.01 },
+    );
+
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, [onPreloadJourney]);
 
   return (
-    <section className="section section--journey" id="journey">
+    <section
+      className="section section--journey"
+      id="journey"
+      ref={sectionRef}
+    >
       <SectionReveal>
         <div className="shell">
           <div className="journey-card">
@@ -36,6 +63,8 @@ export function JourneyPreview({ onOpenJourney }: JourneyPreviewProps) {
                 className="button button--journey"
                 type="button"
                 onClick={onOpenJourney}
+                onPointerEnter={onPreloadJourney}
+                onFocus={onPreloadJourney}
               >
                 <span>{content.action}</span>
                 <ArrowRight aria-hidden="true" size={18} />

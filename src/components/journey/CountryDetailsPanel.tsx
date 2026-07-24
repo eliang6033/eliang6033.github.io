@@ -1,5 +1,6 @@
 import { MapPin, X } from "lucide-react";
 import { motion } from "framer-motion";
+import { useState } from "react";
 import { siteContent } from "../../config/siteContent";
 import { travelStatusLabels } from "../../data/travel";
 import { useReducedMotionPreference } from "../../hooks/useReducedMotionPreference";
@@ -16,11 +17,12 @@ export function CountryDetailsPanel({
 }: CountryDetailsPanelProps) {
   const content = siteContent.journeyMode;
   const reduceMotion = useReducedMotionPreference();
+  const [showImage, setShowImage] = useState(Boolean(location.image));
 
   return (
     <motion.aside
-      className="country-panel"
-      aria-label={`${content.selectedCountryLabel}: ${location.country}`}
+      className={`country-panel ${showImage ? "country-panel--with-image" : ""}`}
+      aria-label={`${content.selectedCountryLabel}: ${location.name}`}
       initial={reduceMotion ? false : { opacity: 0, x: 48 }}
       animate={{ opacity: 1, x: 0 }}
       exit={reduceMotion ? undefined : { opacity: 0, x: 32 }}
@@ -35,33 +37,40 @@ export function CountryDetailsPanel({
         <X aria-hidden="true" size={19} />
       </button>
 
-      <div className="country-panel__photo" aria-label={content.photoPlaceholder}>
-        <span>{location.isoCode}</span>
-        <p>{content.photoPlaceholder}</p>
-      </div>
+      {showImage && location.image ? (
+        <div className="country-panel__photo">
+          <img
+            src={location.image}
+            alt=""
+            onError={() => setShowImage(false)}
+          />
+        </div>
+      ) : null}
 
       <div className="country-panel__header">
         <p>{travelStatusLabels[location.status]}</p>
-        <h2>{location.country}</h2>
-        <span>{location.years}</span>
+        <h2>{location.name}</h2>
+        <span>{location.year}</span>
       </div>
 
-      <h3>{location.highlight}</h3>
-      <p className="country-panel__description">{location.description}</p>
+      {location.highlight ? <h3>{location.highlight}</h3> : null}
+      {location.description ? (
+        <p className="country-panel__description">{location.description}</p>
+      ) : null}
 
-      <div className="country-panel__cities">
-        <p>{content.citiesTitle}</p>
-        <ul>
-          {location.cities.map((city) => (
-            <li key={city}>
-              <MapPin aria-hidden="true" size={14} />
-              <span>{city}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <p className="country-panel__future">{content.regionalNote}</p>
+      {location.cities?.length ? (
+        <div className="country-panel__cities">
+          <p>{content.citiesTitle}</p>
+          <ul>
+            {location.cities.map((city) => (
+              <li key={city}>
+                <MapPin aria-hidden="true" size={14} />
+                <span>{city}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
     </motion.aside>
   );
 }

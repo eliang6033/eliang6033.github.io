@@ -1,12 +1,29 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import {
+  Fragment,
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { siteContent, uiStatusText } from "../../config/siteContent";
+import {
+  keyChapterLocations,
+  travelImportanceOrder,
+  travelImportanceVisuals,
+  travelMapContent,
+} from "../../data/travel";
 import { useReducedMotionPreference } from "../../hooks/useReducedMotionPreference";
-import type { TravelLocation } from "../../types/travel";
+import type { TravelFocusRequest, TravelLocation } from "../../types/travel";
+import { loadTravelGlobe } from "../../utils/preloadJourney";
 import { CountryDetailsPanel } from "./CountryDetailsPanel";
+import { GlobeLoadingState } from "./GlobeLoadingState";
 import { StarBackground } from "./StarBackground";
-import { TravelGlobe } from "./TravelGlobe";
+
+const TravelGlobe = lazy(loadTravelGlobe);
 
 interface JourneyModeProps {
   onClose: () => void;
@@ -17,8 +34,12 @@ export default function JourneyMode({ onClose }: JourneyModeProps) {
   const reduceMotion = useReducedMotionPreference();
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
+  const focusRequestCounterRef = useRef(0);
+  const unavailableTimerRef = useRef<number>();
   const [selectedLocation, setSelectedLocation] =
     useState<TravelLocation | null>(null);
+  const [focusRequest, setFocusRequest] =
+    useState<TravelFocusRequest | null>(null);
   const [unavailableCountry, setUnavailableCountry] = useState<string | null>(
     null,
   );
@@ -41,7 +62,7 @@ export default function JourneyMode({ onClose }: JourneyModeProps) {
       if (event.key !== "Tab") return;
       const focusable = Array.from(
         document.querySelectorAll<HTMLElement>(
-          ".journey-mode button:not([disabled]), .journey-mode a[href]",
+          ".journey-mode button:not([disabled]):not([tabindex='-1']), .journey-mode a[href]",
         ),
       );
       if (focusable.length === 0) return;
@@ -66,13 +87,29 @@ export default function JourneyMode({ onClose }: JourneyModeProps) {
       document.body.style.width = "";
       window.scrollTo({ top: scrollY, behavior: "instant" });
       previousFocusRef.current?.focus();
+      window.clearTimeout(unavailableTimerRef.current);
     };
   }, [onClose]);
 
-  const showUnavailableCountry = (countryName: string) => {
+  const handleSelectLocation = useCallback((location: TravelLocation | null) => {
+    setSelectedLocation(location);
+    if (!location) return;
+
+    focusRequestCounterRef.current += 1;
+    setFocusRequest({
+      isoCode: location.isoCode,
+      requestId: focusRequestCounterRef.current,
+    });
+  }, []);
+
+  const showUnavailableCountry = useCallback((countryName: string) => {
+    window.clearTimeout(unavailableTimerRef.current);
     setUnavailableCountry(countryName);
-    window.setTimeout(() => setUnavailableCountry(null), 2400);
-  };
+    unavailableTimerRef.current = window.setTimeout(
+      () => setUnavailableCountry(null),
+      2400,
+    );
+  }, []);
 
   return (
     <motion.div
@@ -100,6 +137,52 @@ export default function JourneyMode({ onClose }: JourneyModeProps) {
         <p>{content.instructions}</p>
       </div>
 
+      <nav
+        className="journey-key-chapters"
+        aria-label={travelMapContent.keyChaptersLabel}
+      >
+        <span className="journey-key-chapters__label">
+          {travelMapContent.keyChaptersLabel}
+        </span>
+        <div className="journey-key-chapters__links">
+          {keyChapterLocations.map((location, index) => (
+            <Fragment key={location.isoCode}>
+              <button
+                type="button"
+                aria-pressed={selectedLocation?.isoCode === location.isoCode}
+                onClick={() => handleSelectLocation(location)}
+              >
+                {location.name}
+              </button>
+              {index < keyChapterLocations.length - 1 ? (
+                <span aria-hidden="true">
+                  {travelMapContent.countryLabelSeparator}
+                </span>
+              ) : null}
+            </Fragment>
+          ))}
+        </div>
+      </nav>
+
+      <div
+        className="journey-importance-legend"
+        role="list"
+        aria-label={travelMapContent.importanceLegendAriaLabel}
+      >
+        {travelImportanceOrder.map((importance) => {
+          const visual = travelImportanceVisuals[importance];
+          return (
+            <span key={importance} role="listitem">
+              <i
+                aria-hidden="true"
+                style={{ backgroundColor: visual.fill }}
+              />
+              {visual.label}
+            </span>
+          );
+        })}
+      </div>
+
       <motion.div
         className={`journey-globe-stage ${
           selectedLocation ? "journey-globe-stage--with-panel" : ""
@@ -112,11 +195,14 @@ export default function JourneyMode({ onClose }: JourneyModeProps) {
           ease: [0.22, 1, 0.36, 1],
         }}
       >
-        <TravelGlobe
-          selectedLocation={selectedLocation}
-          onSelectLocation={setSelectedLocation}
-          onUnavailableCountry={showUnavailableCountry}
-        />
+        <Suspense fallback={<GlobeLoadingState />}>
+          <TravelGlobe
+            selectedLocation={selectedLocation}
+            focusRequest={focusRequest}
+            onSelectLocation={handleSelectLocation}
+            onUnavailableCountry={showUnavailableCountry}
+          />
+        </Suspense>
       </motion.div>
 
       <AnimatePresence mode="wait">
@@ -124,7 +210,7 @@ export default function JourneyMode({ onClose }: JourneyModeProps) {
           <CountryDetailsPanel
             key={selectedLocation.isoCode}
             location={selectedLocation}
-            onClose={() => setSelectedLocation(null)}
+            onClose={() => handleSelectLocation(null)}
           />
         ) : null}
       </AnimatePresence>
