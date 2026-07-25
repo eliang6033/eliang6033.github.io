@@ -103,6 +103,16 @@ export const siteContent = {
     citiesTitle: "Places",
     selectedCountryLabel: "Selected country",
   },
+  chinaRegionalMode: {
+    ariaLabel: "China regional journey map",
+    eyebrow: "Regional map",
+    title: "China",
+    placesLabel: "Places",
+    backButton: "Back to Globe",
+    loading: "Loading regional map",
+    loadError: "The regional map could not be loaded.",
+    retry: "Retry",
+  },
 } as const;
 
 export const socialLinks: SocialLink[] = [

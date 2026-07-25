@@ -243,7 +243,12 @@ export function TravelGlobe({
       {
         lat: location.coordinates.lat,
         lng: location.coordinates.lng,
-        altitude: location.isoCode === singaporeBeacon.isoCode ? 1.62 : 1.78,
+        altitude:
+          location.isoCode === "CHN"
+            ? 1.42
+            : location.isoCode === singaporeBeacon.isoCode
+              ? 1.62
+              : 1.78,
       },
       reduceMotion ? 0 : 720,
     );

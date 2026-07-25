@@ -1340,6 +1340,355 @@ a.social-link:hover {
   cursor: grabbing;
 }
 
+.china-regional-stage {
+  position: absolute;
+  z-index: 5;
+  inset: 5.5rem 0 0;
+}
+
+.china-regional-mode {
+  display: grid;
+  width: min(1180px, calc(100% - 48px));
+  height: 100%;
+  margin: 0 auto;
+  padding: 10px 0 24px;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 18px;
+}
+
+.china-regional-mode__header {
+  display: flex;
+  min-height: 52px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.china-regional-mode__header > div {
+  text-align: right;
+}
+
+.china-regional-mode__header p,
+.china-regional-mode__places > p {
+  color: color-mix(in srgb, var(--color-journeyCyan) 72%, white);
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  font-weight: 670;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.china-regional-mode__header h2 {
+  margin-top: 3px;
+  color: white;
+  font-size: clamp(1.7rem, 3vw, 2.55rem);
+  font-weight: 680;
+  letter-spacing: -0.045em;
+}
+
+.china-regional-back {
+  display: inline-flex;
+  min-height: 40px;
+  padding: 0 13px;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid color-mix(in srgb, var(--color-journeyCyan) 22%, transparent);
+  border-radius: 8px;
+  color: color-mix(in srgb, white 76%, transparent);
+  background: color-mix(in srgb, var(--color-journey) 72%, transparent);
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.035em;
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.china-regional-back:hover {
+  border-color: color-mix(in srgb, var(--color-journeyCyan) 48%, transparent);
+  color: white;
+  background: color-mix(in srgb, var(--color-journeyCyan) 7%, transparent);
+}
+
+.china-regional-mode__layout {
+  display: grid;
+  min-height: 0;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 320px);
+  gap: clamp(20px, 3vw, 42px);
+}
+
+.china-regional-mode__map-frame,
+.china-regional-mode__places {
+  min-height: 0;
+  border: 1px solid color-mix(in srgb, white 10%, transparent);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--color-darkSurface) 78%, transparent);
+  box-shadow: 0 24px 70px color-mix(in srgb, black 22%, transparent);
+  backdrop-filter: blur(14px);
+}
+
+.china-regional-mode__map-frame {
+  position: relative;
+  display: grid;
+  overflow: hidden;
+  place-items: center;
+  background:
+    linear-gradient(
+      color-mix(in srgb, var(--color-journeyCyan) 3%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--color-journeyCyan) 3%, transparent) 1px,
+      transparent 1px
+    ),
+    color-mix(in srgb, var(--color-darkSurface) 82%, transparent);
+  background-size: 34px 34px;
+}
+
+.china-regional-mode__map-frame::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 54% 48%,
+    color-mix(in srgb, var(--color-journeyCyan) 5%, transparent),
+    transparent 57%
+  );
+}
+
+.china-region-map {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 96%;
+  height: 96%;
+  overflow: visible;
+}
+
+.china-region-map__outline path {
+  fill: #0b1b2b;
+  stroke: color-mix(in srgb, #287f96 34%, transparent);
+  stroke-width: 1.1;
+  vector-effect: non-scaling-stroke;
+}
+
+.china-region-map__shape path {
+  fill: rgba(34, 199, 229, 0.36);
+  stroke: #22c7e5;
+  stroke-width: 1.15;
+  vector-effect: non-scaling-stroke;
+  transition:
+    fill 0.2s ease,
+    stroke 0.2s ease;
+}
+
+.china-region-map__region {
+  cursor: pointer;
+  outline: none;
+}
+
+.china-region-map__region[data-hovered="true"] .china-region-map__shape path,
+.china-region-map__region:focus-visible .china-region-map__shape path {
+  fill: rgba(56, 217, 245, 0.49);
+  stroke: #67e8f9;
+}
+
+.china-region-map__region[data-selected="true"] .china-region-map__shape path {
+  fill: rgba(217, 167, 62, 0.52);
+  stroke: #f0cf72;
+  stroke-width: 1.55;
+}
+
+.china-region-map__hit-area {
+  fill: transparent;
+  stroke: transparent;
+  pointer-events: all;
+}
+
+.china-region-map__leader {
+  stroke: color-mix(in srgb, var(--color-journeyCyan) 50%, transparent);
+  stroke-width: 0.9;
+  stroke-dasharray: 3 3;
+  pointer-events: none;
+  vector-effect: non-scaling-stroke;
+}
+
+.china-region-map__anchor {
+  fill: var(--color-journeyCyan);
+  stroke: color-mix(in srgb, var(--color-journey) 78%, transparent);
+  stroke-width: 1.2;
+  pointer-events: none;
+  vector-effect: non-scaling-stroke;
+}
+
+.china-region-map__label {
+  fill: color-mix(in srgb, white 76%, transparent);
+  stroke: color-mix(in srgb, var(--color-journey) 88%, transparent);
+  stroke-width: 3px;
+  paint-order: stroke;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  pointer-events: all;
+  user-select: none;
+}
+
+.china-region-map__region[data-hovered="true"] .china-region-map__label,
+.china-region-map__region:focus-visible .china-region-map__label {
+  fill: white;
+}
+
+.china-region-map__region[data-selected="true"] .china-region-map__leader {
+  stroke: #f0cf72;
+}
+
+.china-region-map__region[data-selected="true"] .china-region-map__anchor,
+.china-region-map__region[data-selected="true"] .china-region-map__label {
+  fill: #f0cf72;
+}
+
+.china-regional-mode__places {
+  padding: clamp(20px, 3vh, 30px);
+  overflow-y: auto;
+}
+
+.china-regional-mode__places > p {
+  margin-bottom: 16px;
+  color: color-mix(in srgb, white 42%, transparent);
+}
+
+.china-places-list {
+  display: grid;
+  gap: 6px;
+}
+
+.china-places-list button {
+  position: relative;
+  display: grid;
+  min-height: 39px;
+  padding: 0 11px;
+  grid-template-columns: 9px 1fr;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid color-mix(in srgb, white 8%, transparent);
+  border-radius: 7px;
+  color: color-mix(in srgb, white 65%, transparent);
+  background: color-mix(in srgb, white 2%, transparent);
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  text-align: left;
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.china-places-list button:hover,
+.china-places-list button:focus-visible,
+.china-places-list__item--hovered {
+  border-color: color-mix(in srgb, var(--color-journeyCyan) 43%, transparent);
+  color: white;
+  background: color-mix(in srgb, var(--color-journeyCyan) 7%, transparent);
+}
+
+.china-places-list button[aria-pressed="true"] {
+  border-color: color-mix(in srgb, #f0cf72 56%, transparent);
+  color: #f0cf72;
+  background: color-mix(in srgb, #d9a73e 10%, transparent);
+}
+
+.china-places-list__indicator {
+  width: 6px;
+  height: 6px;
+  border: 1px solid var(--color-journeyCyan);
+  transform: rotate(45deg);
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.china-places-list button[aria-pressed="true"]
+  .china-places-list__indicator {
+  border-color: #f0cf72;
+  background: #d9a73e;
+}
+
+.china-regional-loading,
+.china-regional-suspense {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 14px;
+  color: color-mix(in srgb, white 48%, transparent);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.07em;
+}
+
+.china-regional-loading svg {
+  color: color-mix(in srgb, var(--color-journeyCyan) 58%, transparent);
+  filter: drop-shadow(
+    0 0 14px color-mix(in srgb, var(--color-journeyCyan) 7%, transparent)
+  );
+}
+
+.china-regional-loading button {
+  min-height: 34px;
+  padding: 0 13px;
+  border: 1px solid color-mix(in srgb, var(--color-journeyCyan) 34%, transparent);
+  border-radius: 7px;
+  color: white;
+  background: color-mix(in srgb, var(--color-journeyCyan) 8%, transparent);
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+}
+
+.china-regional-suspense {
+  height: 100%;
+}
+
+.china-regional-suspense > div {
+  position: relative;
+  width: 92px;
+  height: 64px;
+  border: 1px solid color-mix(in srgb, var(--color-journeyCyan) 24%, transparent);
+  border-radius: 42% 58% 50% 46%;
+  opacity: 0.72;
+  transform: rotate(-5deg);
+}
+
+.china-regional-suspense i {
+  position: absolute;
+  border: 1px solid color-mix(in srgb, var(--color-journeyCyan) 20%, transparent);
+  border-radius: 50%;
+}
+
+.china-regional-suspense i:nth-child(1) {
+  inset: 12px 28px;
+}
+
+.china-regional-suspense i:nth-child(2) {
+  top: 24px;
+  right: 9px;
+  width: 8px;
+  height: 8px;
+}
+
+.china-regional-suspense i:nth-child(3) {
+  right: 19px;
+  bottom: -9px;
+  width: 10px;
+  height: 7px;
+}
+
 .singapore-beacon {
   display: flex;
   min-height: 44px;
@@ -1938,6 +2287,63 @@ a.social-link:hover {
     transform: translateY(-12%);
   }
 
+  .china-regional-stage {
+    inset: 4.5rem 0 0;
+  }
+
+  .china-regional-mode {
+    width: min(calc(100% - 20px), 620px);
+    padding: 12px 0 max(12px, env(safe-area-inset-bottom));
+    overflow-y: auto;
+    gap: 12px;
+  }
+
+  .china-regional-mode__header {
+    position: relative;
+    z-index: 2;
+    min-height: 48px;
+  }
+
+  .china-regional-mode__header h2 {
+    font-size: 1.55rem;
+  }
+
+  .china-regional-mode__layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(300px, 48dvh) auto;
+    gap: 12px;
+  }
+
+  .china-regional-mode__map-frame {
+    min-height: 300px;
+  }
+
+  .china-regional-mode__places {
+    padding: 17px;
+    overflow: visible;
+  }
+
+  .china-places-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .china-places-list button {
+    min-height: 44px;
+    padding-inline: 10px;
+    font-size: 0.64rem;
+  }
+
+  .china-region-map {
+    width: 100%;
+    height: 100%;
+  }
+
+  .china-region-map__label {
+    stroke-width: 5px;
+    font-size: 21px;
+  }
+
   .country-panel {
     top: auto;
     right: max(10px, env(safe-area-inset-right));
@@ -1980,6 +2386,23 @@ a.social-link:hover {
   .journey-importance-legend {
     gap: 9px;
     font-size: 0.52rem;
+  }
+
+  .china-regional-mode__header > div {
+    min-width: 0;
+  }
+
+  .china-regional-back {
+    min-height: 42px;
+    padding-inline: 11px;
+  }
+
+  .china-regional-mode__layout {
+    grid-template-rows: minmax(280px, 44dvh) auto;
+  }
+
+  .china-places-list button {
+    font-size: 0.61rem;
   }
 
   .singapore-beacon__label {
