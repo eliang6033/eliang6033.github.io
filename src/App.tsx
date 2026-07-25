@@ -68,6 +68,41 @@ export default function App() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!journeyOpen) return;
+
+    const scrollY = window.scrollY;
+    const root = document.documentElement;
+    const body = document.body;
+    const previousBodyStyles = {
+      position: body.style.position,
+      top: body.style.top,
+      right: body.style.right,
+      left: body.style.left,
+      width: body.style.width,
+      overflow: body.style.overflow,
+    };
+
+    root.classList.add("journey-mode-active");
+    body.style.position = "fixed";
+    body.style.top = `-${scrollY}px`;
+    body.style.right = "0";
+    body.style.left = "0";
+    body.style.width = "100%";
+    body.style.overflow = "hidden";
+
+    return () => {
+      root.classList.remove("journey-mode-active");
+      body.style.position = previousBodyStyles.position;
+      body.style.top = previousBodyStyles.top;
+      body.style.right = previousBodyStyles.right;
+      body.style.left = previousBodyStyles.left;
+      body.style.width = previousBodyStyles.width;
+      body.style.overflow = previousBodyStyles.overflow;
+      window.scrollTo({ top: scrollY, behavior: "instant" });
+    };
+  }, [journeyOpen]);
+
   return (
     <>
       <div
