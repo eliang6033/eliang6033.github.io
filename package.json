@@ -12,7 +12,8 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "data:countries": "node scripts/generate-country-data.mjs",
-    "data:china": "node scripts/generate-china-region-data.mjs"
+    "data:china": "node scripts/generate-china-region-data.mjs",
+    "data:usa": "node scripts/generate-usa-state-data.mjs"
   },
   "dependencies": {
     "framer-motion": "12.42.2",

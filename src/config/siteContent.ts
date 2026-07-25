@@ -113,6 +113,18 @@ export const siteContent = {
     loadError: "The regional map could not be loaded.",
     retry: "Retry",
   },
+  usaRegionalMode: {
+    ariaLabel: "United States regional journey map",
+    mapAriaLabel: "United States visited states map",
+    alaskaInsetLabel: "Inset",
+    eyebrow: "Regional map",
+    title: "United States",
+    placesLabel: "Places",
+    backButton: "Back to Globe",
+    loading: "Loading regional map",
+    loadError: "The regional map could not be loaded.",
+    retry: "Retry",
+  },
 } as const;
 
 export const socialLinks: SocialLink[] = [

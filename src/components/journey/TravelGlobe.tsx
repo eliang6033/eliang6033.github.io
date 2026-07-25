@@ -246,6 +246,8 @@ export function TravelGlobe({
         altitude:
           location.isoCode === "CHN"
             ? 1.42
+            : location.isoCode === "USA"
+              ? 1.5
             : location.isoCode === singaporeBeacon.isoCode
               ? 1.62
               : 1.78,

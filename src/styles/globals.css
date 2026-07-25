@@ -1571,6 +1571,26 @@ a.social-link:hover {
   fill: #f0cf72;
 }
 
+.usa-state-map__inset {
+  pointer-events: none;
+}
+
+.usa-state-map__inset-frame {
+  fill: color-mix(in srgb, var(--color-journey) 48%, transparent);
+  stroke: color-mix(in srgb, var(--color-journeyCyan) 24%, transparent);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.usa-state-map__inset-label {
+  fill: color-mix(in srgb, white 42%, transparent);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
 .china-regional-mode__places {
   padding: clamp(20px, 3vh, 30px);
   overflow-y: auto;
@@ -1636,6 +1656,35 @@ a.social-link:hover {
   .china-places-list__indicator {
   border-color: #f0cf72;
   background: #d9a73e;
+}
+
+.usa-place-copy {
+  display: grid;
+  padding: 7px 0;
+  gap: 2px;
+  line-height: 1.25;
+}
+
+.usa-place-copy strong {
+  font-size: 0.68rem;
+  font-weight: 520;
+}
+
+.usa-place-copy small {
+  color: color-mix(in srgb, white 40%, transparent);
+  font-size: 0.55rem;
+  line-height: 1.35;
+  transition: color 0.2s ease;
+}
+
+.usa-places-list button:hover .usa-place-copy small,
+.usa-places-list button:focus-visible .usa-place-copy small,
+.usa-places-list .china-places-list__item--hovered .usa-place-copy small {
+  color: color-mix(in srgb, white 60%, transparent);
+}
+
+.usa-places-list button[aria-pressed="true"] .usa-place-copy small {
+  color: color-mix(in srgb, #f0cf72 68%, white);
 }
 
 .china-regional-loading,
@@ -2382,6 +2431,10 @@ a.social-link:hover {
     font-size: 21px;
   }
 
+  .usa-state-map__inset-label {
+    font-size: 15px;
+  }
+
   .country-panel {
     top: auto;
     right: max(10px, env(safe-area-inset-right));
@@ -2441,6 +2494,14 @@ a.social-link:hover {
 
   .china-places-list button {
     font-size: 0.61rem;
+  }
+
+  .usa-places-list {
+    grid-template-columns: 1fr;
+  }
+
+  .usa-place-copy strong {
+    font-size: 0.65rem;
   }
 
   .singapore-beacon__label {

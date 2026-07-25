@@ -18,6 +18,7 @@ import {
 } from "../../data/travel";
 import { useReducedMotionPreference } from "../../hooks/useReducedMotionPreference";
 import type { ChinaRegionCode } from "../../types/chinaRegion";
+import type { USAStateCode } from "../../types/usaState";
 import type {
   IsoAlpha3Code,
   TravelFocusRequest,
@@ -31,9 +32,17 @@ import { StarBackground } from "./StarBackground";
 const TravelGlobe = lazy(loadTravelGlobe);
 const loadChinaRegionalMode = () => import("./china/ChinaRegionalMode");
 const ChinaRegionalMode = lazy(loadChinaRegionalMode);
+const loadUSARegionalMode = () => import("./usa/USARegionalMode");
+const USARegionalMode = lazy(loadUSARegionalMode);
 
-type JourneyView = "globe" | "china-transition" | "china";
+type JourneyView =
+  | "globe"
+  | "china-transition"
+  | "china"
+  | "usa-transition"
+  | "usa";
 const chinaIsoCode = "CHN";
+const usaIsoCode = "USA";
 
 interface JourneyModeProps {
   onClose: () => void;
@@ -48,6 +57,8 @@ export default function JourneyMode({ onClose }: JourneyModeProps) {
   const unavailableTimerRef = useRef<number>();
   const chinaTransitionTimerRef = useRef<number>();
   const chinaRegionalReadyRef = useRef(false);
+  const usaTransitionTimerRef = useRef<number>();
+  const usaRegionalReadyRef = useRef(false);
   const [selectedLocation, setSelectedLocation] =
     useState<TravelLocation | null>(null);
   const [focusRequest, setFocusRequest] =
@@ -58,6 +69,8 @@ export default function JourneyMode({ onClose }: JourneyModeProps) {
   const [journeyView, setJourneyView] = useState<JourneyView>("globe");
   const [selectedChinaRegionCode, setSelectedChinaRegionCode] =
     useState<ChinaRegionCode | null>(null);
+  const [selectedUSAStateCode, setSelectedUSAStateCode] =
+    useState<USAStateCode | null>(null);
 
   useEffect(() => {
     previousFocusRef.current = document.activeElement as HTMLElement | null;
@@ -82,9 +95,15 @@ export default function JourneyMode({ onClose }: JourneyModeProps) {
     chinaTransitionTimerRef.current = undefined;
   }, []);
 
+  const clearUSATransition = useCallback(() => {
+    window.clearTimeout(usaTransitionTimerRef.current);
+    usaTransitionTimerRef.current = undefined;
+  }, []);
+
   const handleSelectLocation = useCallback(
     (location: TravelLocation | null) => {
       clearChinaTransition();
+      clearUSATransition();
       setSelectedLocation(location);
 
       if (!location) {
@@ -93,41 +112,79 @@ export default function JourneyMode({ onClose }: JourneyModeProps) {
       }
 
       requestCountryFocus(location.isoCode);
-      if (location.isoCode !== chinaIsoCode) {
-        setJourneyView("globe");
+      if (location.isoCode === chinaIsoCode) {
+        setSelectedChinaRegionCode(null);
+        setJourneyView("china-transition");
+        void loadChinaRegionalMode()
+          .then(({ preloadChinaRegionalMode }) => preloadChinaRegionalMode())
+          .then(() => {
+            chinaRegionalReadyRef.current = true;
+          })
+          .catch(() => undefined);
+        const transitionDelay = chinaRegionalReadyRef.current
+          ? reduceMotion
+            ? 0
+            : 140
+          : reduceMotion
+            ? 60
+            : 680;
+        chinaTransitionTimerRef.current = window.setTimeout(
+          () => setJourneyView("china"),
+          transitionDelay,
+        );
         return;
       }
 
-      setSelectedChinaRegionCode(null);
-      setJourneyView("china-transition");
-      void loadChinaRegionalMode()
-        .then(({ preloadChinaRegionalMode }) => preloadChinaRegionalMode())
-        .then(() => {
-          chinaRegionalReadyRef.current = true;
-        })
-        .catch(() => undefined);
-      const transitionDelay = chinaRegionalReadyRef.current
-        ? reduceMotion
-          ? 0
-          : 140
-        : reduceMotion
-          ? 60
-          : 680;
-      chinaTransitionTimerRef.current = window.setTimeout(
-        () => setJourneyView("china"),
-        transitionDelay,
-      );
+      if (location.isoCode === usaIsoCode) {
+        setSelectedUSAStateCode(null);
+        setJourneyView("usa-transition");
+        void loadUSARegionalMode()
+          .then(({ preloadUSARegionalMode }) => preloadUSARegionalMode())
+          .then(() => {
+            usaRegionalReadyRef.current = true;
+          })
+          .catch(() => undefined);
+        const transitionDelay = usaRegionalReadyRef.current
+          ? reduceMotion
+            ? 0
+            : 140
+          : reduceMotion
+            ? 60
+            : 680;
+        usaTransitionTimerRef.current = window.setTimeout(
+          () => setJourneyView("usa"),
+          transitionDelay,
+        );
+        return;
+      }
+
+      setJourneyView("globe");
     },
-    [clearChinaTransition, reduceMotion, requestCountryFocus],
+    [
+      clearChinaTransition,
+      clearUSATransition,
+      reduceMotion,
+      requestCountryFocus,
+    ],
   );
 
-  const handleBackToGlobe = useCallback(() => {
+  const handleBackFromChina = useCallback(() => {
     clearChinaTransition();
+    clearUSATransition();
     setSelectedChinaRegionCode(null);
     setSelectedLocation(null);
     setJourneyView("globe");
     requestCountryFocus(chinaIsoCode);
-  }, [clearChinaTransition, requestCountryFocus]);
+  }, [clearChinaTransition, clearUSATransition, requestCountryFocus]);
+
+  const handleBackFromUSA = useCallback(() => {
+    clearChinaTransition();
+    clearUSATransition();
+    setSelectedUSAStateCode(null);
+    setSelectedLocation(null);
+    setJourneyView("globe");
+    requestCountryFocus(usaIsoCode);
+  }, [clearChinaTransition, clearUSATransition, requestCountryFocus]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -137,8 +194,16 @@ export default function JourneyMode({ onClose }: JourneyModeProps) {
           setSelectedChinaRegionCode(null);
           return;
         }
-        if (journeyView !== "globe") {
-          handleBackToGlobe();
+        if (journeyView === "usa" && selectedUSAStateCode) {
+          setSelectedUSAStateCode(null);
+          return;
+        }
+        if (journeyView === "china" || journeyView === "china-transition") {
+          handleBackFromChina();
+          return;
+        }
+        if (journeyView === "usa" || journeyView === "usa-transition") {
+          handleBackFromUSA();
           return;
         }
         onClose();
@@ -166,11 +231,21 @@ export default function JourneyMode({ onClose }: JourneyModeProps) {
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [handleBackToGlobe, journeyView, onClose, selectedChinaRegionCode]);
+  }, [
+    handleBackFromChina,
+    handleBackFromUSA,
+    journeyView,
+    onClose,
+    selectedChinaRegionCode,
+    selectedUSAStateCode,
+  ]);
 
   useEffect(
-    () => () => clearChinaTransition(),
-    [clearChinaTransition],
+    () => () => {
+      clearChinaTransition();
+      clearUSATransition();
+    },
+    [clearChinaTransition, clearUSATransition],
   );
 
   const showUnavailableCountry = useCallback((countryName: string) => {
@@ -208,7 +283,7 @@ export default function JourneyMode({ onClose }: JourneyModeProps) {
         {journeyView === "globe" ? <p>{content.instructions}</p> : null}
       </div>
 
-      {journeyView !== "china" ? (
+      {journeyView !== "china" && journeyView !== "usa" ? (
         <>
           <nav
             className="journey-key-chapters"
@@ -270,13 +345,32 @@ export default function JourneyMode({ onClose }: JourneyModeProps) {
           >
             <Suspense
               fallback={
-                <ChinaRegionalLoadingShell onBack={handleBackToGlobe} />
+                <ChinaRegionalLoadingShell onBack={handleBackFromChina} />
               }
             >
               <ChinaRegionalMode
                 selectedRegionCode={selectedChinaRegionCode}
                 onSelectRegion={setSelectedChinaRegionCode}
-                onBack={handleBackToGlobe}
+                onBack={handleBackFromChina}
+              />
+            </Suspense>
+          </motion.div>
+        ) : journeyView === "usa" ? (
+          <motion.div
+            key="usa-regional-mode"
+            className="china-regional-stage usa-regional-stage"
+            initial={reduceMotion ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={reduceMotion ? undefined : { opacity: 0 }}
+            transition={{ duration: reduceMotion ? 0 : 0.36 }}
+          >
+            <Suspense
+              fallback={<USARegionalLoadingShell onBack={handleBackFromUSA} />}
+            >
+              <USARegionalMode
+                selectedStateCode={selectedUSAStateCode}
+                onSelectState={setSelectedUSAStateCode}
+                onBack={handleBackFromUSA}
               />
             </Suspense>
           </motion.div>
@@ -343,6 +437,35 @@ function ChinaRegionalLoadingShell({ onBack }: { onBack: () => void }) {
   const content = siteContent.chinaRegionalMode;
   return (
     <section className="china-regional-mode" aria-label={content.ariaLabel}>
+      <div className="china-regional-mode__header">
+        <button type="button" onClick={onBack} className="china-regional-back">
+          <ArrowLeft aria-hidden="true" size={17} />
+          <span>{content.backButton}</span>
+        </button>
+        <div>
+          <p>{content.eyebrow}</p>
+          <h2>{content.title}</h2>
+        </div>
+      </div>
+      <div className="china-regional-suspense" role="status">
+        <div aria-hidden="true">
+          <i />
+          <i />
+          <i />
+        </div>
+        <p>{content.loading}</p>
+      </div>
+    </section>
+  );
+}
+
+function USARegionalLoadingShell({ onBack }: { onBack: () => void }) {
+  const content = siteContent.usaRegionalMode;
+  return (
+    <section
+      className="china-regional-mode usa-regional-mode"
+      aria-label={content.ariaLabel}
+    >
       <div className="china-regional-mode__header">
         <button type="button" onClick={onBack} className="china-regional-back">
           <ArrowLeft aria-hidden="true" size={17} />
