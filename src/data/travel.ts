@@ -63,7 +63,15 @@ export const travelLocations: TravelLocation[] = [
     importance: "extended-stay",
     year: "2025",
     highlight: "First international internship (Full Stack development)",
-    cities: ["Technische Universität Berlin"],
+    cities: [
+      "Technische Universität Berlin",
+      "Berlin",
+      "München",
+      "Hamburg",
+      "Frankfurt",
+      "Köln",
+      "Berchtesgaden",
+    ],
     description:
       "A new chapter combining research, independence, and the experience of living and working abroad.",
     coordinates: { lat: 51.17, lng: 10.45 },
