@@ -18,6 +18,12 @@ export function CountryDetailsPanel({
   const content = siteContent.journeyMode;
   const reduceMotion = useReducedMotionPreference();
   const [showImage, setShowImage] = useState(Boolean(location.image));
+  const places = location.cities?.map((place) =>
+    typeof place === "string" ? { name: place } : place,
+  );
+  const usesPlacesGrid = location.cities?.some(
+    (place) => typeof place !== "string",
+  );
 
   return (
     <motion.aside
@@ -58,14 +64,27 @@ export function CountryDetailsPanel({
         <p className="country-panel__description">{location.description}</p>
       ) : null}
 
-      {location.cities?.length ? (
-        <div className="country-panel__cities">
+      {places?.length ? (
+        <div
+          className={
+            usesPlacesGrid
+              ? "country-panel__cities country-panel__cities--grid"
+              : "country-panel__cities"
+          }
+        >
           <p>{content.citiesTitle}</p>
           <ul>
-            {location.cities.map((city) => (
-              <li key={city}>
+            {places.map((place) => (
+              <li
+                key={place.name}
+                className={
+                  place.layout === "wide"
+                    ? "country-panel__place-card--wide"
+                    : undefined
+                }
+              >
                 <MapPin aria-hidden="true" size={14} />
-                <span>{city}</span>
+                <span>{place.name}</span>
               </li>
             ))}
           </ul>
