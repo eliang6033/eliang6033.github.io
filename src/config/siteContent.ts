@@ -68,7 +68,7 @@ export const siteContent = {
   },
   journeyPreview: {
     eyebrow: "03 · Journey",
-    title: "A Life in Motion",
+    title: "My Journey",
     subtitle: "Explore the places that have shaped my journey.",
     action: "Launch Interactive Globe",
     previewLabel: "Interactive globe preview",

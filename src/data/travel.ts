@@ -141,7 +141,6 @@ export const visitedCountryCodes = travelLocations.map(
 export const travelStats: TravelStat[] = [
   { label: "Countries Visited", value: "13" },
   { label: "Places Lived", value: "3" },
-  { label: "Current Chapter", value: "Singapore" },
 ];
 
 export const travelStatusLabels: Record<TravelStatus, string> = {

@@ -752,8 +752,9 @@ a.social-link:hover {
 
 .journey-stats {
   display: grid;
+  width: min(100%, 340px);
   margin-top: 38px;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1px;
   background: color-mix(in srgb, white 10%, transparent);
 }
@@ -2244,7 +2245,7 @@ a.social-link:hover {
   }
 
   .journey-stats {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .journey-stats div {
@@ -2330,7 +2331,7 @@ a.social-link:hover {
   }
 
   .journey-stats {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .journey-preview-visual {
@@ -2577,17 +2578,17 @@ a.social-link:hover {
   }
 
   .journey-stats {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .journey-stats div {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column-reverse;
+    align-items: flex-start;
+    justify-content: center;
   }
 
   .journey-stats dt {
-    margin: 0;
+    margin-top: 4px;
   }
 
   .hobby-grid {
@@ -3234,10 +3235,6 @@ a.social-link:hover {
 
 .journey-stats dt {
   color: rgba(248, 250, 252, 0.5);
-}
-
-.journey-stats div:last-child dd {
-  color: var(--color-gold);
 }
 
 .button--journey {

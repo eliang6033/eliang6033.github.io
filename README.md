@@ -155,7 +155,7 @@ YOUR_RESUME_URL
 4. `year` 是必填字段；暂时不确定时可以填写 `Year to be added`。
 5. `highlight`、`cities`、`description` 和 `image` 都是可选字段，不需要时可以省略。
 6. `coordinates` 是点击国家后地球移动到的中心位置。
-7. 如果国家总数、居住地数量或当前地点发生变化，同时更新同一文件中的 `travelStats`。
+7. 如果国家总数或居住地数量发生变化，同时更新同一文件中的 `travelStats`。
 
 只增加旅行内容时不需要修改组件。国家名称和代码正确后，地球会使用现有边界数据匹配并高亮该国家。
 
