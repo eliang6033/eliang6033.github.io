@@ -4,6 +4,7 @@ export type HobbyIconName =
   | "camera"
   | "bike"
   | "target"
+  | "feather"
   | "film"
   | "gamepad";
 
@@ -48,7 +49,6 @@ export interface InternshipCategoryContent {
 
 export interface Hobby {
   title: string;
-  description: string;
   icon: HobbyIconName;
   accent: "cyan" | "gold" | "forest" | "rust" | "blue" | "violet";
 }

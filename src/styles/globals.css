@@ -1076,13 +1076,6 @@ a.social-link:hover {
   letter-spacing: -0.03em;
 }
 
-.hobby-card p {
-  margin-top: 12px;
-  color: var(--color-muted);
-  font-size: 0.83rem;
-  line-height: 1.65;
-}
-
 .hobby-card__line {
   position: absolute;
   right: 25px;
@@ -3349,9 +3342,9 @@ a.social-link:hover {
 .hobby-card:last-child {
   display: grid;
   min-height: 245px;
-  grid-column: span 6;
+  grid-column: span 4;
   grid-template-columns: 82px minmax(0, 1fr);
-  grid-template-rows: auto auto 1fr;
+  grid-template-rows: auto 1fr;
   column-gap: 28px;
   background:
     radial-gradient(circle at 88% 24%, rgba(28, 200, 229, 0.13), transparent 28%),
@@ -3403,7 +3396,7 @@ a.social-link:hover {
 .hobby-card:last-child .hobby-card__icon {
   margin-top: 36px;
   grid-column: 1;
-  grid-row: 2 / 4;
+  grid-row: 2;
   color: var(--color-brightCyan);
   background: rgba(28, 200, 229, 0.07);
 }
@@ -3412,15 +3405,9 @@ a.social-link:hover {
   margin-top: 34px;
   grid-column: 2;
   grid-row: 2;
+  align-self: start;
   color: var(--color-surface);
   font-size: 1.45rem;
-}
-
-.hobby-card:last-child p {
-  max-width: 620px;
-  grid-column: 2;
-  grid-row: 3;
-  color: rgba(248, 250, 252, 0.65);
 }
 
 .hobby-card:last-child .hobby-card__line {
@@ -3564,6 +3551,10 @@ a.social-link:hover {
   .hobby-card:last-child {
     grid-column: span 2;
   }
+
+  .hobby-card:nth-last-child(2) {
+    grid-column: span 2;
+  }
 }
 
 @media (max-width: 760px) {
@@ -3696,6 +3687,7 @@ a.social-link:hover {
   .hobby-card,
   .hobby-card:first-child,
   .hobby-card:nth-child(2),
+  .hobby-card:nth-last-child(2),
   .hobby-card:last-child {
     display: block;
     min-height: 270px;
@@ -3704,8 +3696,7 @@ a.social-link:hover {
 
   .hobby-card:last-child .hobby-card__number,
   .hobby-card:last-child .hobby-card__icon,
-  .hobby-card:last-child h3,
-  .hobby-card:last-child p {
+  .hobby-card:last-child h3 {
     display: revert;
   }
 

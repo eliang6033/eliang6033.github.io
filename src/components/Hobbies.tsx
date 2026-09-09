@@ -2,6 +2,7 @@ import {
   Bike,
   Camera,
   Crosshair,
+  Feather,
   Film,
   Gamepad2,
   Plane,
@@ -18,6 +19,7 @@ const hobbyIcons: Record<HobbyIconName, LucideIcon> = {
   camera: Camera,
   bike: Bike,
   target: Crosshair,
+  feather: Feather,
   film: Film,
   gamepad: Gamepad2,
 };
@@ -49,7 +51,6 @@ export function Hobbies() {
                     <Icon aria-hidden="true" size={25} strokeWidth={1.7} />
                   </span>
                   <h3>{hobby.title}</h3>
-                  <p>{hobby.description}</p>
                   <span className="hobby-card__line" aria-hidden="true" />
                 </article>
               );
