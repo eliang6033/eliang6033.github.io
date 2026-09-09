@@ -60,11 +60,11 @@ export const siteContent = {
     },
   },
   projects: {
-    eyebrow: "02 · Research & Projects",
+    eyebrow: "02 · Research & Internship",
     title: "Questions worth building toward.",
     introduction:
       "I am interested in systems that can reason about the physical world, act safely within it, and keep learning from experience.",
-    cardAriaPrefix: "Project:",
+    cardAriaPrefix: "Research and internship item:",
   },
   journeyPreview: {
     eyebrow: "03 · Journey",

@@ -669,7 +669,8 @@ a.social-link:hover {
   text-transform: uppercase;
 }
 
-.project-card h3 {
+.project-card__list-title,
+.project-entry__title {
   color: var(--color-ink);
   font-size: 1.45rem;
   font-weight: 690;
@@ -677,11 +678,39 @@ a.social-link:hover {
   line-height: 1.18;
 }
 
-.project-card > p {
+.project-card__empty-state,
+.project-entry__meta,
+.project-entry__description {
   margin-top: 17px;
   color: var(--color-muted);
   font-size: 0.9rem;
   line-height: 1.68;
+}
+
+.project-entry-list,
+.project-entry {
+  min-width: 0;
+}
+
+.project-entry + .project-entry {
+  margin-top: 26px;
+  padding-top: 26px;
+  border-top: 1px solid var(--line);
+}
+
+.project-entry__year {
+  display: block;
+  margin-bottom: 14px;
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 620;
+  letter-spacing: 0.12em;
+  line-height: 1;
+}
+
+.project-entry__description {
+  max-width: 58ch;
 }
 
 .tag-list {
@@ -700,16 +729,34 @@ a.social-link:hover {
   font-weight: 570;
 }
 
-.project-card__detail {
+.project-entry__links {
   display: flex;
   z-index: 1;
-  margin-top: auto;
-  padding-top: 28px;
+  margin-top: 24px;
+  flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
+  gap: 16px;
+}
+
+.project-entry__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   color: var(--color-cyan);
   font-size: 0.75rem;
   font-weight: 650;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.project-entry__link:hover {
+  color: var(--color-electricBlue);
+}
+
+.project-entry__link:focus-visible {
+  border-radius: 4px;
+  outline: 2px solid var(--color-cyan);
+  outline-offset: 6px;
 }
 
 .journey-card {
@@ -2320,8 +2367,7 @@ a.social-link:hover {
     grid-template-columns: 1fr;
   }
 
-  .project-card,
-  .project-card:last-child {
+  .project-card {
     min-height: 350px;
     grid-column: auto;
   }
@@ -3107,7 +3153,7 @@ a.social-link:hover {
   box-shadow: 0 15px 40px rgba(7, 17, 31, 0.055);
 }
 
-.project-card:first-child {
+.project-card--research {
   min-height: 500px;
   border-color: rgba(56, 217, 245, 0.16);
   background:
@@ -3115,12 +3161,8 @@ a.social-link:hover {
     var(--color-darkSurface);
 }
 
-.project-card:nth-child(2) {
+.project-card--internships {
   min-height: 430px;
-}
-
-.project-card:nth-child(3) {
-  background: var(--color-surface);
 }
 
 .project-card::before {
@@ -3157,44 +3199,64 @@ a.social-link:hover {
   font-family: var(--font-mono);
 }
 
-.project-card h3 {
+.project-card__list-title,
+.project-entry__title {
   max-width: 490px;
   font-size: clamp(1.55rem, 2.7vw, 2.35rem);
 }
 
-.project-card:first-child h3 {
+.project-card__list-title {
+  margin-bottom: 22px;
+}
+
+.project-entry__year {
+  color: color-mix(in srgb, var(--color-muted) 72%, transparent);
+}
+
+.project-card--research .project-card__list-title,
+.project-card--research .project-entry__title {
   color: var(--color-surface);
 }
 
-.project-card:first-child > p {
+.project-card--research .project-card__empty-state,
+.project-card--research .project-entry__meta,
+.project-card--research .project-entry__description {
   max-width: 560px;
   color: rgba(248, 250, 252, 0.68);
 }
 
-.project-card:first-child .project-card__number {
+.project-card--research .project-card__number {
   color: rgba(56, 217, 245, 0.19);
 }
 
-.project-card:first-child .project-card__category {
+.project-card--research .project-card__category {
   border-color: rgba(56, 217, 245, 0.2);
   color: var(--color-brightCyan);
   background: rgba(28, 200, 229, 0.055);
 }
 
-.project-card:first-child .tag-list li {
+.project-card--research .tag-list li {
   color: rgba(248, 250, 252, 0.72);
   background: rgba(248, 250, 252, 0.06);
+}
+
+.project-card--research .project-entry + .project-entry {
+  border-top-color: rgba(56, 217, 245, 0.14);
 }
 
 .tag-list li {
   background: color-mix(in srgb, var(--color-page) 76%, transparent);
 }
 
-.project-card__detail {
+.project-entry__link {
   color: color-mix(in srgb, var(--color-electricBlue) 65%, var(--color-ink));
 }
 
-.project-card:first-child .project-card__detail {
+.project-entry__link:hover {
+  color: var(--color-cyan);
+}
+
+.project-card--research .project-entry__link {
   color: var(--color-brightCyan);
 }
 
@@ -3427,7 +3489,7 @@ a.social-link:hover {
     font-size: clamp(3.8rem, 6.8vw, 5.8rem);
   }
 
-  .project-card:first-child {
+  .project-card--research {
     min-height: 470px;
   }
 }
@@ -3533,8 +3595,8 @@ a.social-link:hover {
   }
 
   .project-card,
-  .project-card:first-child,
-  .project-card:nth-child(2) {
+  .project-card--research,
+  .project-card--internships {
     min-height: 390px;
   }
 
@@ -3610,8 +3672,8 @@ a.social-link:hover {
   }
 
   .project-card,
-  .project-card:first-child,
-  .project-card:nth-child(2) {
+  .project-card--research,
+  .project-card--internships {
     min-height: 370px;
   }
 

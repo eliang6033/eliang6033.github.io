@@ -13,12 +13,37 @@ export interface SocialLink {
   icon: SocialIconName;
 }
 
-export interface Project {
+export interface EntryLink {
+  label: string;
+  url: string;
+}
+
+export interface ResearchEntry {
+  year: string;
   title: string;
-  category: string;
-  description: string;
+  venue?: string;
+  description?: string;
+  links?: EntryLink[];
+}
+
+export interface InternshipEntry {
+  year: string;
+  role: string;
+  institution: string;
   tags: string[];
-  detailLabel: string;
+  links: EntryLink[];
+}
+
+export interface ResearchCategoryContent {
+  number: string;
+  label: string;
+  listTitle: string;
+  emptyState: string;
+}
+
+export interface InternshipCategoryContent {
+  number: string;
+  label: string;
 }
 
 export interface Hobby {

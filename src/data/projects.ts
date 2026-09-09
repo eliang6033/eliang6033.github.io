@@ -1,20 +1,42 @@
-import type { Project } from "../types/content";
+import type {
+  InternshipCategoryContent,
+  InternshipEntry,
+  ResearchCategoryContent,
+  ResearchEntry,
+} from "../types/content";
 
-export const projects: Project[] = [
+export const researchCategory: ResearchCategoryContent = {
+  number: "01",
+  label: "Research",
+  listTitle: "Selected Research",
+  emptyState: "Selected research and publications coming soon.",
+};
+
+export const internshipCategory: InternshipCategoryContent = {
+  number: "02",
+  label: "Internships",
+};
+
+export const researchEntries: ResearchEntry[] = [];
+
+export const internshipEntries: InternshipEntry[] = [
   {
-    title: "Safe Autonomous Systems",
-    category: "Research",
-    description:
-      "Exploring safety constraints, control barrier functions, and flow-matching methods for autonomous planning and control.",
-    tags: ["Safe AI", "Control Barrier Functions", "Flow Matching"],
-    detailLabel: "View research direction",
+    role: "Full Stack Development",
+    year: "2025",
+    institution: "The Centre for Entrepreneurship, TU Berlin",
+    tags: ["Full Stack"],
+    links: [
+      {
+        label: "Leapsome",
+        url: "https://www.leapsome.com/",
+      },
+    ],
   },
   {
-    title: "Embodied World Models",
-    category: "Research",
-    description:
-      "Studying action-conditioned video and world models for robot locomotion, manipulation, prediction, and planning.",
-    tags: ["Embodied AI", "World Models", "Robotics"],
-    detailLabel: "View research direction",
+    role: "AI Research Intern",
+    year: "2026",
+    institution: "Ropedia",
+    tags: ["World Models"],
+    links: [],
   },
 ];
