@@ -17,7 +17,33 @@ export const internshipCategory: InternshipCategoryContent = {
   label: "Internships",
 };
 
-export const researchEntries: ResearchEntry[] = [];
+export const researchEntries: ResearchEntry[] = [
+  {
+    title:
+      "Xperience-0: Scaling Loco-Manipulation World Models across Embodiments with Human Experience",
+    authors: [
+      { name: "Tianqi Liu", marker: "*" },
+      { name: "Hanfei Zhao", marker: "*" },
+      { name: "Qifeng Liang", marker: "*", highlight: true },
+      { name: "Hui En Pang" },
+      { name: "Jiarui Xu" },
+      { name: "Sayang Mu" },
+      { name: "Penghao Qiu" },
+      { name: "YingSheng Zhang" },
+      { name: "Jun Wang" },
+      { name: "Ziang Cao" },
+      { name: "Mingze Sun" },
+      { name: "Yukang Cao" },
+      { name: "Fangzhou Hong" },
+      { name: "Zhaoxi Chen" },
+      { name: "Ziwei Liu" },
+    ],
+    authorNote: "* Equal contribution",
+    links: [
+      { label: "Project page", url: "https://ropedia.github.io/Xperience-0/" },
+    ],
+  },
+];
 
 export const internshipEntries: InternshipEntry[] = [
   {
@@ -37,6 +63,11 @@ export const internshipEntries: InternshipEntry[] = [
     year: "2026",
     institution: "Ropedia",
     tags: ["World Models"],
-    links: [],
+    links: [
+      {
+        label: "Ropedia",
+        url: "https://ropedia.com/",
+      },
+    ],
   },
 ];

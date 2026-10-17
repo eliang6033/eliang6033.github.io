@@ -19,9 +19,17 @@ export interface EntryLink {
   url: string;
 }
 
+export interface ResearchAuthor {
+  name: string;
+  marker?: string;
+  highlight?: boolean;
+}
+
 export interface ResearchEntry {
-  year: string;
+  year?: string;
   title: string;
+  authors?: ResearchAuthor[];
+  authorNote?: string;
   venue?: string;
   description?: string;
   links?: EntryLink[];

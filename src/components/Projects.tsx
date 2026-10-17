@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { siteContent } from "../config/siteContent";
@@ -81,8 +82,33 @@ export function Projects() {
                       className="project-entry project-entry--research"
                       key={`${entry.year}-${entry.title}`}
                     >
-                      <span className="project-entry__year">{entry.year}</span>
+                      {entry.year ? (
+                        <span className="project-entry__year">{entry.year}</span>
+                      ) : null}
                       <h4 className="project-entry__title">{entry.title}</h4>
+                      {entry.authors?.length ? (
+                        <p className="project-entry__authors">
+                          {entry.authors.map((author, index, authors) => (
+                            <Fragment key={author.name}>
+                              <span className="project-entry__author">
+                                {author.highlight ? (
+                                  <strong>{author.name}</strong>
+                                ) : (
+                                  author.name
+                                )}
+                                {author.marker ? <sup>{author.marker}</sup> : null}
+                                {index < authors.length - 1 ? "," : null}
+                              </span>
+                              {index < authors.length - 1 ? " " : null}
+                            </Fragment>
+                          ))}
+                        </p>
+                      ) : null}
+                      {entry.authorNote ? (
+                        <p className="project-entry__author-note">
+                          {entry.authorNote}
+                        </p>
+                      ) : null}
                       {entry.venue ? (
                         <p className="project-entry__meta">{entry.venue}</p>
                       ) : null}

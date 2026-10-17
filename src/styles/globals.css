@@ -3253,6 +3253,52 @@ a.social-link:hover {
   color: var(--color-brightCyan);
 }
 
+/* Publication typography is scoped to Selected Research only. */
+.project-entry--research .project-entry__title {
+  font-size: clamp(1.18rem, 1.65vw, 1.4rem);
+  letter-spacing: -0.025em;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.project-entry--research .project-entry__authors {
+  margin-top: 18px;
+  color: rgba(248, 250, 252, 0.68);
+  font-size: 0.86rem;
+  line-height: 1.85;
+}
+
+.project-entry--research .project-entry__author {
+  display: inline-block;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.project-entry--research .project-entry__author strong {
+  color: var(--color-brightCyan);
+  font-weight: 700;
+}
+
+.project-entry--research .project-entry__author sup {
+  margin-left: 1px;
+  color: inherit;
+  font-size: 0.7em;
+}
+
+.project-entry--research .project-entry__author strong + sup {
+  color: var(--color-brightCyan);
+  font-weight: 700;
+}
+
+.project-entry--research .project-entry__author-note {
+  margin-top: 12px;
+  color: var(--color-brightCyan);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  line-height: 1.6;
+}
+
 .section--journey {
   padding: 110px 0;
   background: var(--color-dark);
