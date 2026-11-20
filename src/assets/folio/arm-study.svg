@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 516 380" fill="none" stroke-linejoin="round" stroke-linecap="round">
+  <!-- An original schematic illustration, not a depiction of a particular project. -->
+  <defs>
+    <pattern id="engrave" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(32)">
+      <path d="M0 0v4" stroke="#56554b" stroke-width=".72"/>
+    </pattern>
+    <pattern id="dense" width="2.6" height="2.6" patternUnits="userSpaceOnUse" patternTransform="rotate(33)">
+      <path d="M0 0v2.6" stroke="#42463f" stroke-width=".7"/>
+    </pattern>
+    <g id="bearing" stroke="#32382f">
+      <ellipse rx="22" ry="23" fill="#dcd9c8" stroke-width="1.55"/>
+      <ellipse rx="18.3" ry="19.3" fill="url(#engrave)" stroke-width=".8"/>
+      <ellipse rx="12.8" ry="13.6" fill="#f5f2e5" stroke-width="1"/>
+      <ellipse rx="7.5" ry="8" fill="#b5654a" stroke-width="1.1"/>
+      <path d="M-3 0 0-2.7 3-.4 1.4 2.7-1.6 2.5Z" fill="#363a31" stroke-width=".6"/>
+      <g fill="#42463a" stroke="none"><circle cy="-16.5" r="1.1"/><circle cy="16.5" r="1.1"/><circle cx="-15.5" r="1.1"/><circle cx="15.5" r="1.1"/></g>
+    </g>
+  </defs>
+  <!-- Survey marks and projection lines sit behind the inked mechanism. -->
+  <g stroke="#8c8d78" stroke-width=".75" opacity=".68">
+    <path d="m34 331 152 28 245-42M111 351l235-55m-73 37 103 21" stroke-dasharray="6 4 1 4"/>
+    <ellipse cx="167" cy="322" rx="93" ry="17" stroke-dasharray="2 5"/>
+    <path d="M166 345v-28m231-34v48m-17-5 35 6" stroke-dasharray="7 4 1 4"/>
+  </g>
+  <g stroke="#363a32" stroke-width="1.6">
+    <!-- Foot plate and rotary base -->
+    <path d="m81 310 62-20 98 10 9 9-1 11-66 18-96-13-7-6Z" fill="#e9e7d8"/>
+    <path d="m81 310 99 15 68-17m-68 17 2 13m65-28-1 7-62 17" stroke-width=".9"/>
+    <path d="m82 313 96 14 2 8-92-12-6-4Zm102 15 63-17-1 7-62 17Z" fill="url(#engrave)" stroke="none"/>
+    <g fill="#acae98" stroke-width=".8"><ellipse cx="94" cy="312" rx="3.3" ry="1.3"/><ellipse cx="181" cy="323" rx="3.3" ry="1.3"/><ellipse cx="233" cy="308" rx="3.3" ry="1.3"/></g>
+    <path d="M111 287v19c1 18 102 23 111-1v-20Z" fill="#d9d9c6"/>
+    <path d="M111 287v18c5 14 54 19 77 14v-22Z" stroke="none" fill="url(#dense)"/>
+    <ellipse cx="166.5" cy="286" rx="55.5" ry="13.5" fill="#eeecdc"/>
+    <path d="M113 302c10 14 88 18 107-1m-105 4c11 14 82 17 103-1" stroke-width=".8"/>
+    <path d="m120 284 8-19 74-3 13 22c-5 14-81 20-95 0Z" fill="#d8d9c7"/>
+    <path d="m121 283 7-15c13 12 42 12 53 10l-1 17c-24 4-50-2-59-12Z" fill="url(#engrave)" stroke="none"/>
+    <ellipse cx="164" cy="264" rx="38" ry="9" fill="#e9e8d9"/>
+    <path d="m135 268 1-44 15-9 36 2 16 14-4 35-15 7Z" fill="#e5e4d4"/>
+    <path d="m135 224 13 9 4 38-16-3Zm51-3 15 10-4 34-13 5Z" fill="url(#dense)" stroke-width=".8"/>
+    <!-- Rear parallelogram linkage -->
+    <path d="m180 228 21-1 65-131-14-10-12 4Z" fill="#cccebb"/>
+    <path d="m191 226 8-3 64-127-7-4Z" fill="url(#dense)" stroke-width=".8"/>
+    <path d="m181 216 62-125 7-3" stroke-width=".8"/>
+    <!-- Lower link, front casting -->
+    <path d="m149 245-7-19 66-148 16-12 28-1 15 14-2 20-14 13-65 134-20 10Z" fill="#c9cbbb"/>
+    <path d="m142 226 11 14 24-4 66-135 12-6 12-16-15-14-29 2-16 14Z" fill="url(#engrave)" stroke-width=".9"/>
+    <path d="M151 246c-10-5-16-16-12-28l61-143c4-11 11-17 23-16 13 1 24 12 25 25 1 11-5 20-13 26l-61 132c-4 8-14 10-23 4Z" fill="#f2efe1"/>
+    <path d="m158 205 45-102 12 6-44 101c-3 6-14 2-13-5Z" fill="#d8d9c7" stroke-width="1"/>
+    <path d="m161 204 45-98m-42 98 43-96" stroke-width=".8"/>
+    <path d="m178 228 59-124m-87 101 48-114" stroke-width=".7"/>
+    <use href="#bearing" transform="translate(159 231) scale(1.12)"/>
+    <!-- Upper beam; its narrow back face carries the service cable. -->
+    <path d="m222 64 20-7 116 36 20 18-2 14-14 11-31-5-100-25-17-18Z" fill="#d4d5c2"/>
+    <path d="m227 67 18-6 112 34 16 13-18 4-113-34Z" fill="#f8f4e8" stroke-width="1"/>
+    <path d="m221 72 16-6 13 3 104 31 16 16-4 16-12 6-128-33-13-14Z" fill="#eeeada"/>
+    <path d="m249 84 89 26 8 9-3 6-102-29Z" fill="url(#dense)" stroke-width="1.1"/>
+    <path d="m251 88 85 25 4 5m-99-14 105 28m-95-55 95 29" stroke-width=".8"/>
+    <path d="M229 63c12-24 25-21 43-14l75 27q16 6 16 22m-131-34c11-21 22-18 39-12l74 27q14 5 15 19" stroke-width="1.4"/>
+    <path d="m276 53-3 7m7-5-2 6m43 9-3 7m7-6-3 7" stroke-width="2.4"/>
+    <use href="#bearing" transform="translate(224 83) scale(1.02)"/>
+    <!-- Wrist gearbox and shorter terminal arm -->
+    <path d="m352 104 17-5 41 38 4 16-17 10-14-5-39-33Z" fill="#cbceba"/>
+    <path d="m353 106 14-3 36 35-10 5Z" fill="#f5f0e1" stroke-width=".9"/>
+    <path d="m343 112 16-5 39 36 4 12-10 8-12-6-39-32Z" fill="#e2e2cf"/>
+    <path d="m361 119 28 26-2 6-31-28Z" fill="url(#engrave)" stroke-width=".9"/>
+    <use href="#bearing" transform="translate(353 117) scale(.73)"/>
+    <use href="#bearing" transform="translate(391 151) scale(.52)"/>
+    <path d="m384 163 3 20 7 5 14-3 5-7-3-23-7 5Z" fill="#c9cbb7"/>
+    <path d="m390 162 4 22 13-2-3-24" fill="url(#engrave)" stroke-width=".9"/>
+    <path d="m383 182 18 4 14-6 1 15-14 8-21-6Z" fill="#e5e3d3"/>
+    <path d="m383 186 17 4 15-6m-14 6 1 12" stroke-width=".9"/>
+    <!-- Opposed gripper jaws -->
+    <path d="m381 195 7 3-3 16 11 12-3 6-16-16Z" fill="#c0c4ae"/>
+    <path d="m388 199 5 1-3 13 10 10-4 3-11-12Z" fill="#f4efe0" stroke-width="1"/>
+    <path d="m410 195 7-5 7 17-10 19-6 1 9-21Z" fill="#b7bda9"/>
+    <path d="m408 198 3 11-8 15 5 3 10-20-7-13Z" fill="#f0eddd" stroke-width="1.1"/>
+  </g>
+  <!-- A light isometric reference solid under the gripper. -->
+  <g stroke="#995139" stroke-width="1.2">
+    <path d="m377 249 27-13 27 11-27 15Z" fill="#f4e1cf"/>
+    <path d="m377 249 27 13v28l-27-14Z" fill="#e1b49b"/>
+    <path d="m404 262 27-15v28l-27 15Z" fill="#ebc8af"/>
+    <path d="m381 255 19 10m-19-6 19 10m-19-6 19 10m-19-6 19 10m-19-6 19 10" opacity=".55" stroke-width=".7"/>
+  </g>
+</svg>

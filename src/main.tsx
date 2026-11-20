@@ -3,6 +3,9 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import { siteContent, themeTokens } from "./config/siteContent";
 import "./styles/globals.css";
+import "./styles/portfolio.css";
+import "./styles/portfolio-sections.css";
+import "./styles/portfolio-atlas.css";
 
 document.title = siteContent.seo.title;
 Object.entries(themeTokens.colors).forEach(([name, value]) => {

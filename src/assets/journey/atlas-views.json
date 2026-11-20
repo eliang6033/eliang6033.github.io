@@ -1,0 +1,9 @@
+{
+  "width": 740,
+  "height": 350,
+  "radius": 159,
+  "hemispheres": [
+    { "x": 188, "y": 175, "longitude": -104, "latitude": -8 },
+    { "x": 552, "y": 175, "longitude": 76, "latitude": 8 }
+  ]
+}

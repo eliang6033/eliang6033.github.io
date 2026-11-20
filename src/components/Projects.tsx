@@ -1,6 +1,5 @@
 import { Fragment } from "react";
 import { ArrowUpRight } from "lucide-react";
-import { motion } from "framer-motion";
 import { siteContent } from "../config/siteContent";
 import {
   internshipCategory,
@@ -9,7 +8,6 @@ import {
   researchEntries,
 } from "../data/projects";
 import type { EntryLink, ResearchAuthor, ResearchEntry } from "../types/content";
-import { useReducedMotionPreference } from "../hooks/useReducedMotionPreference";
 import { SectionHeading } from "./SectionHeading";
 import { SectionReveal } from "./SectionReveal";
 
@@ -85,7 +83,6 @@ function AuthorByline({ authors = [], authorSummary }: Pick<ResearchEntry, "auth
 
 export function Projects() {
   const content = siteContent.projects;
-  const reduceMotion = useReducedMotionPreference();
 
   return (
     <section className="section section--projects" id="projects">
@@ -96,11 +93,9 @@ export function Projects() {
             title={content.title}
           />
           <div className="project-grid">
-            <motion.article
+            <article
               className="project-card project-card--research"
               aria-label={`${content.cardAriaPrefix} ${researchCategory.label}`}
-              whileHover={reduceMotion ? undefined : { y: -5 }}
-              transition={{ duration: 0.22 }}
             >
               <CategoryHeader
                 number={researchCategory.number}
@@ -143,13 +138,11 @@ export function Projects() {
                   </p>
                 )}
               </div>
-            </motion.article>
+            </article>
 
-            <motion.article
+            <article
               className="project-card project-card--internships"
               aria-label={`${content.cardAriaPrefix} ${internshipCategory.label}`}
-              whileHover={reduceMotion ? undefined : { y: -5 }}
-              transition={{ duration: 0.22 }}
             >
               <CategoryHeader
                 number={internshipCategory.number}
@@ -175,7 +168,7 @@ export function Projects() {
                   </article>
                 ))}
               </div>
-            </motion.article>
+            </article>
           </div>
         </div>
       </SectionReveal>

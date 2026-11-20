@@ -1,7 +1,9 @@
 import { ArrowRight } from "lucide-react";
 import { useEffect, useRef } from "react";
+import atlasImage from "../assets/journey/atlas-hemispheres.svg";
+import atlasViews from "../assets/journey/atlas-views.json";
 import { siteContent } from "../config/siteContent";
-import { travelStats } from "../data/travel";
+import { getTravelMapTier, travelLocations, travelStats } from "../data/travel";
 import { formatSectionLabel } from "../utils/sectionLabel";
 import { SectionReveal } from "./SectionReveal";
 
@@ -9,6 +11,26 @@ interface JourneyPreviewProps {
   onOpenJourney: () => void;
   onPreloadJourney: () => void;
 }
+
+// Project each live travel record onto the same two views as the static engraving.
+// No map library, WebGL or GeoJSON is loaded to display this homepage figure.
+const radians = Math.PI / 180;
+const atlasPins = travelLocations.flatMap(location => {
+  const lat = location.coordinates.lat * radians;
+  for (const view of atlasViews.hemispheres) {
+    const lat0 = view.latitude * radians;
+    const delta = (location.coordinates.lng - view.longitude) * radians;
+    const cosLat = Math.cos(lat);
+    if (Math.sin(lat0) * Math.sin(lat) + Math.cos(lat0) * cosLat * Math.cos(delta) < 0) continue;
+    return [{
+      isoCode: location.isoCode,
+      tier: getTravelMapTier(location),
+      x: view.x + atlasViews.radius * cosLat * Math.sin(delta),
+      y: view.y - atlasViews.radius * (Math.cos(lat0) * Math.sin(lat) - Math.sin(lat0) * cosLat * Math.cos(delta)),
+    }];
+  }
+  return [];
+}).sort((a, b) => Number(a.tier === "chapter") - Number(b.tier === "chapter"));
 
 export function JourneyPreview({
   onOpenJourney,
@@ -71,18 +93,19 @@ export function JourneyPreview({
               </button>
             </div>
 
-            <div className="journey-preview-visual" aria-label={content.previewLabel}>
-              <div className="preview-stars" aria-hidden="true" />
-              <div className="preview-globe" aria-hidden="true">
-                <span className="preview-globe__line preview-globe__line--one" />
-                <span className="preview-globe__line preview-globe__line--two" />
-                <span className="preview-globe__line preview-globe__line--three" />
-                <span className="preview-globe__pin preview-globe__pin--one" />
-                <span className="preview-globe__pin preview-globe__pin--two" />
-                <span className="preview-globe__pin preview-globe__pin--three" />
+            <figure className="journey-preview-visual" aria-label={content.previewLabel}>
+              <div className="atlas-plate" aria-hidden="true">
+                <img src={atlasImage} alt="" width={atlasViews.width} height={atlasViews.height} loading="lazy" decoding="async" />
+                <svg viewBox={`0 0 ${atlasViews.width} ${atlasViews.height}`} focusable="false">
+                  {atlasPins.map(pin => (
+                    <circle key={pin.isoCode} cx={pin.x} cy={pin.y}
+                      r={pin.tier === "chapter" ? 3.9 : 2.8}
+                      className={`atlas-pin atlas-pin--${pin.tier}`} />
+                  ))}
+                </svg>
               </div>
-              <p>{content.orbitLabel}</p>
-            </div>
+              <figcaption>{content.orbitLabel}</figcaption>
+            </figure>
           </div>
         </div>
       </SectionReveal>

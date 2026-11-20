@@ -1,24 +1,28 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { siteContent } from "../config/siteContent";
 import { useReducedMotionPreference } from "../hooks/useReducedMotionPreference";
 
 export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const toggle = useRef<HTMLButtonElement>(null);
   const reduceMotion = useReducedMotionPreference();
   const content = siteContent.navigation;
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 12);
-    handleScroll();
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    if (!menuOpen) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      setMenuOpen(false);
+      toggle.current?.focus();
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [menuOpen]);
 
   return (
-    <header className={`site-nav ${scrolled ? "site-nav--scrolled" : ""}`}>
+    <header className="site-nav">
       <div className="nav-inner">
         <a className="nav-brand" href="#top" onClick={() => setMenuOpen(false)}>
           <span className="nav-brand__mark" aria-hidden="true">
@@ -36,6 +40,7 @@ export function Navbar() {
         </nav>
 
         <button
+          ref={toggle}
           className="nav-toggle"
           type="button"
           aria-label={menuOpen ? content.closeMenuLabel : content.openMenuLabel}

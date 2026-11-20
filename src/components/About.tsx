@@ -1,4 +1,3 @@
-import { BrainCircuit, MapPin, Plane } from "lucide-react";
 import { siteContent } from "../config/siteContent";
 import { travelStats } from "../data/travel";
 import { SectionHeading } from "./SectionHeading";
@@ -10,17 +9,14 @@ export function About() {
 
   const facts = [
     {
-      icon: MapPin,
       value: content.facts.location.value,
       label: content.facts.location.label,
     },
     {
-      icon: BrainCircuit,
       value: content.facts.focus.value,
       label: content.facts.focus.label,
     },
     {
-      icon: Plane,
       value: countriesVisited,
       label: content.facts.countries.label,
     },
@@ -38,12 +34,9 @@ export function About() {
               ))}
             </div>
             <dl className="about-facts">
-              {facts.map(({ icon: Icon, value, label }) => (
+              {facts.map(({ value, label }) => (
                 <div className="about-fact" key={label}>
-                  <dt>
-                    <Icon aria-hidden="true" size={16} />
-                    {label}
-                  </dt>
+                  <dt>{label}</dt>
                   <dd>{value}</dd>
                 </div>
               ))}
