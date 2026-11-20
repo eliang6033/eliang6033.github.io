@@ -34,7 +34,6 @@ export function JourneyLoadingShell({
           <ArrowLeft aria-hidden="true" size={18} />
           <span>{content.backButton}</span>
         </button>
-        <p>{content.instructions}</p>
       </div>
 
       <div className="journey-loading-frame">

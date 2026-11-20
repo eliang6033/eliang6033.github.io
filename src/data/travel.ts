@@ -1,6 +1,6 @@
 import type {
-  TravelImportance,
   TravelLocation,
+  TravelMapTier,
   TravelStat,
   TravelStatus,
 } from "../types/travel";
@@ -152,8 +152,9 @@ export const travelStatusLabels: Record<TravelStatus, string> = {
 export const travelMapContent = {
   unknownCountryName: "Unknown country",
   countryLabelSeparator: "·",
-  importanceLegendAriaLabel: "Travel importance legend",
-  keyChaptersLabel: "Key Chapters",
+  importanceLegendAriaLabel: "Map legend",
+  countryListLabel: "Visited countries",
+  countryListToggleLabel: "Countries",
   singaporeBeaconLabel: "Singapore",
   singaporeBeaconAriaLabel: "Open Singapore travel details",
 } as const;
@@ -162,44 +163,34 @@ export const travelLocationByIsoCode = new Map<string, TravelLocation>(
   travelLocations.map((location) => [location.isoCode, location]),
 );
 
-export const travelImportanceVisuals = {
-  home: {
-    label: "Home chapters",
-    fill: "#22C7E5",
-    border: "#67E8F9",
-  },
-  "extended-stay": {
-    label: "Extended stays",
+/** Home and internship chapters keep their distinct stories, but share one map color. */
+export function getTravelMapTier(location: Pick<TravelLocation, "importance">): TravelMapTier {
+  return location.importance === "visited" ? "visited" : "chapter";
+}
+
+export const travelMapVisuals = {
+  chapter: {
+    label: "Key chapters",
     fill: "#D9A73E",
     border: "#F0CF72",
+    altitude: 0.007,
+    textureAlpha: "b5",
   },
   visited: {
-    label: "Visited",
-    fill: "#1B6277",
-    border: "#287F96",
+    label: "Travel visits",
+    fill: "#408BC6",
+    border: "#86C5F4",
+    altitude: 0.006,
+    textureAlpha: "a8",
   },
 } as const satisfies Record<
-  TravelImportance,
-  { label: string; fill: string; border: string }
+  TravelMapTier,
+  { label: string; fill: string; border: string; altitude: number; textureAlpha: string }
 >;
 
 export const unvisitedCountryColor = "#142236";
 
-export const travelImportanceOrder: TravelImportance[] = [
-  "home",
-  "extended-stay",
-  "visited",
-];
-
-export const keyChapterIsoCodes = ["CHN", "USA", "SGP", "DEU"] as const;
-
-export const keyChapterLocations = keyChapterIsoCodes.map((isoCode) => {
-  const location = travelLocationByIsoCode.get(isoCode);
-  if (!location) {
-    throw new Error(`Missing key chapter travel data for ${isoCode}`);
-  }
-  return location;
-});
+export const travelMapTierOrder = ["chapter", "visited"] as const satisfies readonly TravelMapTier[];
 
 export const singaporeBeacon = {
   isoCode: "SGP",

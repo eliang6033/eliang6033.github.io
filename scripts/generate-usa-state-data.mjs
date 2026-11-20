@@ -1,6 +1,7 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { terrainFrame } from "./terrain-frame.mjs";
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const outputDirectory = resolve(projectRoot, "public/data/usa");
@@ -364,13 +365,17 @@ const alaskaProjection = createProjection(
 
 const outlineDocument = {
   viewBox,
+  terrainFrame: terrainFrame("contiguous", contiguousProjection.project),
   contiguousPaths: geometryToPaths(
     contiguousOutlineGeometry,
     contiguousProjection.project,
     0.68,
     0.16,
   ),
-  alaskaInset: { frame: alaskaInsetFrame },
+  alaskaInset: {
+    frame: alaskaInsetFrame,
+    terrainFrame: terrainFrame("alaska", alaskaProjection.project),
+  },
 };
 
 const visitedStatesDocument = {

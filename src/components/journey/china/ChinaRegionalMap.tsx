@@ -1,4 +1,6 @@
 import type { KeyboardEvent } from "react";
+import terrainUrl from "../../../assets/journey/terrain-china.webp";
+import { RegionalTerrain } from "../RegionalTerrain";
 import { chinaRegionByCode, chinaRegions } from "../../../data/chinaRegions";
 import type {
   ChinaMapData,
@@ -50,6 +52,7 @@ export function ChinaRegionalMap({
           <path key={index} d={path} />
         ))}
       </g>
+      <RegionalTerrain src={terrainUrl} paths={data.outline.paths} frame={data.outline.terrainFrame} />
 
       {chinaRegions.map((region) => {
         const shape = shapeByCode.get(region.code);

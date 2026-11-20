@@ -13,8 +13,9 @@ import {
   type CountryFeature,
 } from "../../data/countryGeometry";
 import {
+  getTravelMapTier,
   singaporeBeacon,
-  travelImportanceVisuals,
+  travelMapVisuals,
   travelLocationByIsoCode,
   travelMapContent,
   unvisitedCountryColor,
@@ -22,7 +23,6 @@ import {
 import { useReducedMotionPreference } from "../../hooks/useReducedMotionPreference";
 import type {
   TravelFocusRequest,
-  TravelImportance,
   TravelLocation,
 } from "../../types/travel";
 import { GlobeLoadingState } from "./GlobeLoadingState";
@@ -42,12 +42,6 @@ interface GlobeControls {
   addEventListener: (event: string, listener: () => void) => void;
   removeEventListener: (event: string, listener: () => void) => void;
 }
-
-const importanceAltitude: Record<TravelImportance, number> = {
-  home: 0.008,
-  "extended-stay": 0.007,
-  visited: 0.006,
-};
 
 function asCountryFeature(value: object): CountryFeature {
   return value as CountryFeature;
@@ -185,10 +179,12 @@ export function TravelGlobe({
     if (!container) return;
 
     const updateSize = () => {
-      const rect = container.getBoundingClientRect();
+      // Measure layout, not the temporary scale applied by the entry animation.
+      const { clientWidth: width, clientHeight: height } = container;
+      if (!width || !height) return;
       setSize({
-        width: Math.max(280, Math.round(rect.width)),
-        height: Math.max(280, Math.round(rect.height)),
+        width,
+        height,
       });
     };
 
@@ -341,9 +337,8 @@ export function TravelGlobe({
           polygonCapColor={(object) => {
             const feature = asCountryFeature(object);
             const location = getLocation(feature);
-            const baseColor = location
-              ? travelImportanceVisuals[location.importance].fill
-              : unvisitedCountryColor;
+            const visual = location ? travelMapVisuals[getTravelMapTier(location)] : null;
+            const baseColor = visual?.fill ?? unvisitedCountryColor;
             const selected = location && selectedLocation?.isoCode === location.isoCode;
             const hovered = hoveredCode === getFeatureCode(feature);
             const color = selected || hovered
@@ -351,15 +346,15 @@ export function TravelGlobe({
               : baseColor;
             // The mesh remains pickable even where the imagery shows through.
             if (!surface) return color;
-            if (!location) return hovered ? "rgba(92, 144, 167, 0.13)" : "rgba(20, 34, 54, 0.035)";
-            return color + (location.importance === "visited" ? "a8" : "c4");
+            if (!visual) return hovered ? "rgba(92, 144, 167, 0.13)" : "rgba(20, 34, 54, 0.035)";
+            return color + visual.textureAlpha;
           }}
           polygonSideColor={() => "rgba(5, 12, 24, 0.18)"}
           polygonStrokeColor={(object) => {
             const feature = asCountryFeature(object);
             const location = getLocation(feature);
             if (!location) return "rgba(134, 163, 178, 0.28)";
-            const borderColor = travelImportanceVisuals[location.importance].border;
+            const borderColor = travelMapVisuals[getTravelMapTier(location)].border;
             if (selectedLocation?.isoCode === location.isoCode) {
               return brightenHexColor(borderColor, 0.16);
             }
@@ -372,7 +367,7 @@ export function TravelGlobe({
             const feature = asCountryFeature(object);
             const location = getLocation(feature);
             const baseAltitude = location
-              ? importanceAltitude[location.importance]
+              ? travelMapVisuals[getTravelMapTier(location)].altitude
               : 0.004;
             if (location && selectedLocation?.isoCode === location.isoCode) {
               return baseAltitude + 0.008;

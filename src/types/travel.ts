@@ -1,5 +1,6 @@
 export type TravelStatus = "visited" | "lived" | "current";
 export type TravelImportance = "home" | "extended-stay" | "visited";
+export type TravelMapTier = "chapter" | "visited";
 export type TravelPlaceLayout = "default" | "wide";
 
 /** Uppercase ISO 3166-1 alpha-3 country code, such as CHN or USA. */

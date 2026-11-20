@@ -1,6 +1,7 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { terrainFrame } from "./terrain-frame.mjs";
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const outputDirectory = resolve(projectRoot, "public/data/china");
@@ -343,6 +344,7 @@ const { bounds, project } = createProjection([chinaOutline, hongKongOutline]);
 
 const outlineDocument = {
   viewBox: [0, 0, viewBox.width, viewBox.height],
+  terrainFrame: terrainFrame("china", project),
   paths: [chinaOutline, hongKongOutline].flatMap((feature) =>
     geometryToPaths(feature.geometry, project, 0.72, 0.18),
   ),

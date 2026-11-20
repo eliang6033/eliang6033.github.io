@@ -1,4 +1,7 @@
 import type { KeyboardEvent } from "react";
+import contiguousTerrain from "../../../assets/journey/terrain-contiguous.webp";
+import alaskaTerrain from "../../../assets/journey/terrain-alaska.webp";
+import { RegionalTerrain } from "../RegionalTerrain";
 import { siteContent } from "../../../config/siteContent";
 import { usaStateByCode, usaStates } from "../../../data/usaStates";
 import type { USAMapData, USAStateCode } from "../../../types/usaState";
@@ -27,6 +30,7 @@ export function USARegionalMap({
     data.visitedStates.states.map((shape) => [shape.code, shape]),
   );
   const alaskaName = usaStateByCode.get("US-AK")?.name;
+  const alaskaShape = shapeByCode.get("US-AK");
   const [insetX, insetY, insetWidth, insetHeight] =
     data.outline.alaskaInset.frame;
 
@@ -55,6 +59,11 @@ export function USARegionalMap({
           <path key={index} d={path} />
         ))}
       </g>
+      <RegionalTerrain
+        src={contiguousTerrain}
+        paths={data.outline.contiguousPaths}
+        frame={data.outline.terrainFrame}
+      />
 
       <g
         className="usa-state-map__inset"
@@ -80,6 +89,13 @@ export function USARegionalMap({
           {content.alaskaInsetLabel}
         </text>
       </g>
+      {alaskaShape && (
+        <RegionalTerrain
+          src={alaskaTerrain}
+          paths={alaskaShape.paths}
+          frame={data.outline.alaskaInset.terrainFrame}
+        />
+      )}
 
       {usaStates.map((state) => {
         const shape = shapeByCode.get(state.code);

@@ -19,6 +19,7 @@ export interface ChinaRegionDefinition {
 
 export interface ChinaOutlineDocument {
   viewBox: [number, number, number, number];
+  terrainFrame?: [number, number, number, number];
   paths: string[];
 }
 

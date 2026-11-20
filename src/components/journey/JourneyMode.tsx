@@ -1,7 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ChevronDown } from "lucide-react";
 import {
-  Fragment,
   lazy,
   Suspense,
   useCallback,
@@ -11,9 +10,10 @@ import {
 } from "react";
 import { siteContent, uiStatusText } from "../../config/siteContent";
 import {
-  keyChapterLocations,
-  travelImportanceOrder,
-  travelImportanceVisuals,
+  getTravelMapTier,
+  travelLocations,
+  travelMapTierOrder,
+  travelMapVisuals,
   travelMapContent,
 } from "../../data/travel";
 import { useReducedMotionPreference } from "../../hooks/useReducedMotionPreference";
@@ -28,6 +28,7 @@ import { loadTravelGlobe } from "../../utils/preloadJourney";
 import { CountryDetailsPanel } from "./CountryDetailsPanel";
 import { GlobeLoadingState } from "./GlobeLoadingState";
 import { StarBackground } from "./StarBackground";
+import "../../styles/journey-directory.css";
 
 const TravelGlobe = lazy(loadTravelGlobe);
 const loadChinaRegionalMode = () => import("./china/ChinaRegionalMode");
@@ -43,6 +44,9 @@ type JourneyView =
   | "usa";
 const chinaIsoCode = "CHN";
 const usaIsoCode = "USA";
+const directoryLocations = travelMapTierOrder.flatMap(tier =>
+  travelLocations.filter(location => getTravelMapTier(location) === tier),
+);
 
 interface JourneyModeProps {
   onClose: () => void;
@@ -52,6 +56,10 @@ export default function JourneyMode({ onClose }: JourneyModeProps) {
   const content = siteContent.journeyMode;
   const reduceMotion = useReducedMotionPreference();
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const directoryRef = useRef<HTMLElement>(null);
+  const directoryToggleRef = useRef<HTMLButtonElement>(null);
+  const keyboardReturnCountry = useRef<IsoAlpha3Code | null>(null);
+  const [directoryOpen, setDirectoryOpen] = useState(false);
   const previousFocusRef = useRef<HTMLElement | null>(null);
   const focusRequestCounterRef = useRef(0);
   const unavailableTimerRef = useRef<number>();
@@ -105,6 +113,7 @@ export default function JourneyMode({ onClose }: JourneyModeProps) {
       clearChinaTransition();
       clearUSATransition();
       setSelectedLocation(location);
+      setDirectoryOpen(false);
 
       if (!location) {
         setJourneyView("globe");
@@ -186,10 +195,45 @@ export default function JourneyMode({ onClose }: JourneyModeProps) {
     requestCountryFocus(usaIsoCode);
   }, [clearChinaTransition, clearUSATransition, requestCountryFocus]);
 
+  // A keyboard choice can replace the focused country button with another view.
+  // Keep focus in the dialog and return to that country (or its compact menu).
+  useEffect(() => {
+    const iso = keyboardReturnCountry.current;
+    if (!iso) return;
+    if (journeyView !== "globe") {
+      closeButtonRef.current?.focus({ preventScroll: true });
+      return;
+    }
+    if (selectedLocation) {
+      const close = document.querySelector<HTMLButtonElement>(".journey-mode .country-panel__close");
+      (close ?? directoryToggleRef.current)?.focus({ preventScroll: true });
+      return;
+    }
+    const row = directoryRef.current?.querySelector<HTMLButtonElement>(`button[data-country="${iso}"]`);
+    (row?.getClientRects().length ? row : directoryToggleRef.current)?.focus();
+    keyboardReturnCountry.current = null;
+  }, [journeyView, selectedLocation]);
+
+  useEffect(() => {
+    if (!directoryOpen) return;
+    const dismissOnOutsidePress = (event: PointerEvent) => {
+      if (event.target instanceof Node && !directoryRef.current?.contains(event.target)) {
+        setDirectoryOpen(false);
+      }
+    };
+    document.addEventListener("pointerdown", dismissOnOutsidePress);
+    return () => document.removeEventListener("pointerdown", dismissOnOutsidePress);
+  }, [directoryOpen]);
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         event.preventDefault();
+        if (directoryOpen && directoryToggleRef.current?.getClientRects().length) {
+          setDirectoryOpen(false);
+          directoryToggleRef.current.focus();
+          return;
+        }
         if (journeyView === "china" && selectedChinaRegionCode) {
           setSelectedChinaRegionCode(null);
           return;
@@ -215,7 +259,7 @@ export default function JourneyMode({ onClose }: JourneyModeProps) {
         document.querySelectorAll<HTMLElement>(
           ".journey-mode button:not([disabled]):not([tabindex='-1']), .journey-mode a[href], .journey-mode [role='button'][tabindex='0']",
         ),
-      );
+      ).filter(element => element.getClientRects().length > 0 && !element.closest("[inert]"));
       if (focusable.length === 0) return;
 
       const first = focusable[0];
@@ -232,6 +276,7 @@ export default function JourneyMode({ onClose }: JourneyModeProps) {
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [
+    directoryOpen,
     handleBackFromChina,
     handleBackFromUSA,
     journeyView,
@@ -280,55 +325,81 @@ export default function JourneyMode({ onClose }: JourneyModeProps) {
           <ArrowLeft aria-hidden="true" size={18} />
           <span>{content.backButton}</span>
         </button>
-        {journeyView === "globe" ? <p>{content.instructions}</p> : null}
       </div>
 
-      {journeyView !== "china" && journeyView !== "usa" ? (
+      {journeyView === "globe" ? (
         <>
           <nav
-            className="journey-key-chapters"
-            aria-label={travelMapContent.keyChaptersLabel}
+            ref={directoryRef}
+            className="journey-directory"
+            data-open={directoryOpen}
+            data-detail={Boolean(selectedLocation)}
+            aria-label={travelMapContent.countryListLabel}
           >
-            <span className="journey-key-chapters__label">
-              {travelMapContent.keyChaptersLabel}
-            </span>
-            <div className="journey-key-chapters__links">
-              {keyChapterLocations.map((location, index) => (
-                <Fragment key={location.isoCode}>
-                  <button
-                    type="button"
-                    aria-pressed={selectedLocation?.isoCode === location.isoCode}
-                    onClick={() => handleSelectLocation(location)}
-                  >
-                    {location.name}
-                  </button>
-                  {index < keyChapterLocations.length - 1 ? (
-                    <span aria-hidden="true">
-                      {travelMapContent.countryLabelSeparator}
-                    </span>
-                  ) : null}
-                </Fragment>
-              ))}
+            <button
+              type="button"
+              ref={directoryToggleRef}
+              className="journey-directory__toggle"
+              aria-label={travelMapContent.countryListLabel}
+              aria-expanded={directoryOpen}
+              aria-controls="journey-country-list"
+              onClick={() => {
+                if (selectedLocation) {
+                  keyboardReturnCountry.current = selectedLocation.isoCode;
+                  handleSelectLocation(null);
+                }
+                setDirectoryOpen(!directoryOpen);
+              }}
+            >
+              {travelMapContent.countryListToggleLabel}
+              <ChevronDown size={16} aria-hidden="true" />
+            </button>
+            <div className="journey-directory__index" id="journey-country-list">
+              <p className="journey-directory__heading">
+                {travelMapContent.countryListLabel}
+                <span>{directoryLocations.length}</span>
+              </p>
+              <ul>
+                {directoryLocations.map(location => {
+                  const tier = getTravelMapTier(location);
+                  return (
+                    <li key={location.isoCode} data-tier={tier}>
+                      <button
+                        type="button"
+                        data-country={location.isoCode}
+                        style={{ color: travelMapVisuals[tier].border }}
+                        onClick={event => {
+                          keyboardReturnCountry.current = event.detail === 0 ? location.isoCode : null;
+                          handleSelectLocation(location);
+                        }}
+                      >
+                        <i aria-hidden="true" />
+                        {location.name}
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
             </div>
           </nav>
 
-          <div
-            className="journey-importance-legend"
-            role="list"
-            aria-label={travelMapContent.importanceLegendAriaLabel}
-          >
-            {travelImportanceOrder.map((importance) => {
-              const visual = travelImportanceVisuals[importance];
-              return (
-                <span key={importance} role="listitem">
-                  <i
-                    aria-hidden="true"
-                    style={{ backgroundColor: visual.fill }}
-                  />
-                  {visual.label}
-                </span>
-              );
-            })}
+          <div className="journey-map-key">
+            <div
+              className="journey-map-key__tiers"
+              role="list"
+              aria-label={travelMapContent.importanceLegendAriaLabel}
+            >
+              {travelMapTierOrder.map(tier => {
+                const visual = travelMapVisuals[tier];
+                return (
+                  <span key={tier} role="listitem">
+                    <i aria-hidden="true" style={{ backgroundColor: visual.border }} />
+                    {visual.label}
+                  </span>
+                );
+              })}
+            </div>
+            <p>{content.instructions}</p>
           </div>
         </>
       ) : null}
@@ -410,7 +481,12 @@ export default function JourneyMode({ onClose }: JourneyModeProps) {
           <CountryDetailsPanel
             key={selectedLocation.isoCode}
             location={selectedLocation}
-            onClose={() => handleSelectLocation(null)}
+            onClose={() => {
+              if (document.activeElement?.closest(".country-panel")) {
+                keyboardReturnCountry.current = selectedLocation.isoCode;
+              }
+              handleSelectLocation(null);
+            }}
           />
         ) : null}
       </AnimatePresence>

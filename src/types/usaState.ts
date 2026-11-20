@@ -18,9 +18,11 @@ export interface USAStatePlace {
 
 export interface USAOutlineDocument {
   viewBox: [number, number, number, number];
+  terrainFrame?: [number, number, number, number];
   contiguousPaths: string[];
   alaskaInset: {
     frame: [number, number, number, number];
+    terrainFrame?: [number, number, number, number];
   };
 }
 

@@ -34,7 +34,9 @@ function isStringArray(value: unknown): value is string[] {
 
 function isOutlineDocument(value: unknown): value is ChinaOutlineDocument {
   if (!isRecord(value)) return false;
-  return isNumberTuple(value.viewBox, 4) && isStringArray(value.paths);
+  return isNumberTuple(value.viewBox, 4) &&
+    (value.terrainFrame === undefined || isNumberTuple(value.terrainFrame, 4)) &&
+    isStringArray(value.paths);
 }
 
 function isRegionShape(value: unknown): value is ChinaRegionShape {

@@ -36,6 +36,8 @@ function isOutlineDocument(value: unknown): value is USAOutlineDocument {
   if (!isRecord(value) || !isRecord(value.alaskaInset)) return false;
   return (
     isNumberTuple(value.viewBox, 4) &&
+    (value.terrainFrame === undefined || isNumberTuple(value.terrainFrame, 4)) &&
+    (value.alaskaInset.terrainFrame === undefined || isNumberTuple(value.alaskaInset.terrainFrame, 4)) &&
     isStringArray(value.contiguousPaths) &&
     isNumberTuple(value.alaskaInset.frame, 4)
   );
