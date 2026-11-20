@@ -20,7 +20,7 @@ export const internshipCategory: InternshipCategoryContent = {
 export const researchEntries: ResearchEntry[] = [
   {
     title:
-      "Xperience-0: Scaling Loco-Manipulation World Models across Embodiments with Human Experience",
+      "Ropedia W0: Scaling Loco-Manipulation World Models across Embodiments with Human Experience",
     authors: [
       { name: "Tianqi Liu", marker: "*" },
       { name: "Hanfei Zhao", marker: "*" },
@@ -38,10 +38,10 @@ export const researchEntries: ResearchEntry[] = [
       { name: "Zhaoxi Chen" },
       { name: "Ziwei Liu" },
     ],
-    authorSummary: { first: 3, last: 3, omission: "et al." },
     authorNote: "* Equal contribution",
     links: [
-      { label: "Project page", url: "https://ropedia.github.io/Xperience-0/" },
+      { label: "Preprint", url: "https://arxiv.org/abs/2610.26855" },
+      { label: "Project page", url: "https://ropedia.github.io/ropedia-w0/" },
     ],
   },
   {
