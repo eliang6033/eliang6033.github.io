@@ -11,7 +11,7 @@
 
 - Sticky 导航、Hero、About、Projects、Journey Preview、Hobbies、Contact 和 Footer
 - 使用 `react-globe.gl` 与 Three.js 的全屏 3D 旅行地球
-- 右侧国家目录列出全部 13 个国家，可直接点选；右下角图例用金色表示重要经历、蓝色表示旅行到访。
+- 右侧国家目录列出全部 13 个国家，可直接点选；右下角图例用浅黄铜色表示重要经历、鼠尾草绿表示旅行到访。
 - 拖动旋转、滚轮或双指缩放、自动旋转与交互后恢复
 - Escape 和返回按钮退出旅行模式，并恢复原来的页面位置
 - 桌面端右侧国家详情面板、移动端底部抽屉
@@ -151,7 +151,7 @@ YOUR_RESUME_URL
 
 1. `isoCode` 使用大写的 ISO 3166-1 三字母代码，地球依靠这个字段匹配国家。
 2. `status` 可选 `visited`、`lived` 或 `current`，用于详情中的文字状态。
-3. `importance` 保留三种经历含义，但地图只用两种标色：`home`（居住）和 `extended-stay`（长期停留）都是金色；`visited`（旅行到访）是蓝色。右侧国家目录从同一份数据生成，不必另外维护名单。
+3. `importance` 保留三种经历含义，但地图只用两种标色：`home`（居住）和 `extended-stay`（长期停留）都是浅黄铜色；`visited`（旅行到访）是鼠尾草绿。右侧国家目录从同一份数据生成，不必另外维护名单。首页地图预览和互动地球的共用配色在 `src/config/atlasTheme.ts` 中。
 4. `year` 是必填字段；暂时不确定时可以填写 `Year to be added`。
 5. `highlight`、`cities`、`description` 和 `image` 都是可选字段，不需要时可以省略。
 6. `coordinates` 是点击国家后地球移动到的中心位置。

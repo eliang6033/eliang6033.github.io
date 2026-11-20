@@ -28,7 +28,7 @@
   width: 100%;
   min-height: 0;
   padding-inline-start: 17px;
-  border-inline-start: 1px solid rgba(181, 205, 226, 0.24);
+  border-inline-start: 1px solid var(--atlas-rule);
   pointer-events: auto;
 }
 
@@ -37,14 +37,15 @@
   align-items: baseline;
   justify-content: space-between;
   padding-bottom: 9px;
-  font: 600 0.9rem/1.4 var(--font-mono);
-  color: #e9f2f9;
+  font: 400 1.25rem/1.25 var(--folio-serif);
+  color: var(--atlas-paper);
 }
 
 .journey-directory__heading span {
   font-size: 0.8rem;
   font-weight: 400;
-  color: #9cacc0;
+  color: var(--atlas-muted);
+  font-family: var(--folio-sans);
   font-variant-numeric: tabular-nums;
 }
 
@@ -56,11 +57,11 @@
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-width: thin;
-  scrollbar-color: #476076 transparent;
+  scrollbar-color: var(--atlas-rule) transparent;
 }
 
 .journey-directory__index li[data-tier="chapter"] + li[data-tier="visited"] {
-  border-top: 1px solid rgba(181, 205, 226, 0.16);
+  border-top: 1px solid color-mix(in srgb, var(--atlas-rule) 58%, transparent);
   margin-top: 5px;
   padding-top: 5px;
 }
@@ -72,7 +73,7 @@
   gap: 11px;
   border: 0;
   border-radius: 4px;
-  color: #d8e4f1;
+  color: var(--atlas-paper);
   background: transparent;
   cursor: pointer;
   text-align: left;
@@ -90,12 +91,12 @@
 
 .journey-directory__index button:hover,
 .journey-directory__index button:focus-visible {
-  background: rgba(165, 195, 220, 0.11);
-  color: white;
+  background: color-mix(in srgb, var(--atlas-visited) 13%, transparent);
+  color: var(--atlas-paper);
 }
 
 .journey-directory button:focus-visible {
-  outline: 2px solid var(--color-brightCyan);
+  outline: 2px solid var(--atlas-visited-edge);
   outline-offset: -2px;
 }
 
@@ -113,10 +114,10 @@
   flex-shrink: 0;
   min-height: 44px;
   padding: 0 12px;
-  border: 1px solid rgba(181, 205, 226, 0.26);
+  border: 1px solid var(--atlas-rule);
   border-radius: 8px;
-  color: #eaf2f8;
-  background: var(--color-journey);
+  color: var(--atlas-paper);
+  background: var(--atlas-surface);
   font-size: 0.85rem;
   font-weight: 600;
   pointer-events: auto;
@@ -138,7 +139,7 @@
 .journey-map-key {
   bottom: max(22px, calc(env(safe-area-inset-bottom) + 16px));
   width: min(290px, calc(100% - 24px));
-  color: #c9d7e6;
+  color: var(--atlas-paper);
   pointer-events: none;
 }
 
@@ -161,7 +162,7 @@
   font-size: 0.8125rem;
   line-height: 1.45;
   text-align: right;
-  color: #a8b9cc;
+  color: var(--atlas-muted);
 }
 
 @media (min-width: 761px) {
@@ -203,9 +204,9 @@
     margin-top: 7px;
     max-height: min(58dvh, calc(100dvh - 136px - env(safe-area-inset-top) - env(safe-area-inset-bottom)));
     padding: 8px;
-    border: 1px solid rgba(181, 205, 226, 0.26);
+    border: 1px solid var(--atlas-rule);
     border-radius: 10px;
-    background: var(--color-journey);
+    background: var(--atlas-surface);
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.28);
   }
 
@@ -231,7 +232,7 @@
     width: auto;
     padding: 6px 8px;
     border-radius: 4px;
-    background: color-mix(in srgb, var(--color-journey) 86%, transparent);
+    background: color-mix(in srgb, var(--atlas-surface) 86%, transparent);
   }
 
   .journey-mode .country-panel {

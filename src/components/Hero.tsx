@@ -3,12 +3,7 @@ import { siteContent } from "../config/siteContent";
 import portrait from "../assets/folio/eli-windmills.jpg";
 import { SocialLinks } from "./SocialLinks";
 
-interface HeroProps {
-  onOpenJourney: () => void;
-  onPreloadJourney: () => void;
-}
-
-export function Hero({ onOpenJourney, onPreloadJourney }: HeroProps) {
+export function Hero() {
   const content = siteContent.hero;
   const parts = content.name.match(/^([^()]+)(\([^()]+\))(.*)$/);
 
@@ -25,11 +20,9 @@ export function Hero({ onOpenJourney, onPreloadJourney }: HeroProps) {
         <p className="hero-degree">{content.degrees}</p>
         <p className="hero-school">{content.school}</p>
         <div className="hero-actions">
-          <button className="folio-action" type="button" onClick={onOpenJourney}
-            onPointerEnter={onPreloadJourney} onFocus={onPreloadJourney}>
+          <a className="folio-action" href="#projects">
             {content.primaryAction}<ArrowRight size={16} aria-hidden="true" />
-          </button>
-          <a className="folio-text-link" href="#projects">{content.secondaryAction}</a>
+          </a>
         </div>
         <SocialLinks />
       </div>

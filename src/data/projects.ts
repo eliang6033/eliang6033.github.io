@@ -97,6 +97,6 @@ export const internshipEntries: InternshipEntry[] = [
     role: "Undergraduate Researcher",
     institution: "Safe Autonomous Systems Lab, UC San Diego",
     tags: ["Safe Generative Planning"],
-    links: [],
+    links: [{ label: "SAS Lab", url: "https://sylviaherbert.com/" }],
   },
 ];

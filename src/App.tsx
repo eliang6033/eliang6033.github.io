@@ -113,10 +113,7 @@ export default function App() {
       >
         <Navbar />
         <main>
-          <Hero
-            onOpenJourney={openJourney}
-            onPreloadJourney={preloadJourneyExperience}
-          />
+          <Hero />
           <About />
           <Projects />
           <JourneyPreview

@@ -7,6 +7,7 @@ import {
 } from "react";
 import Globe, { type GlobeMethods } from "react-globe.gl";
 import { MeshPhongMaterial, SRGBColorSpace, Texture } from "three";
+import { atlasGlobe, atlasInks } from "../../config/atlasTheme";
 import { loadEarthSurface } from "../../data/earthSurface";
 import {
   loadCountryFeatures,
@@ -18,7 +19,6 @@ import {
   travelMapVisuals,
   travelLocationByIsoCode,
   travelMapContent,
-  unvisitedCountryColor,
 } from "../../data/travel";
 import { useReducedMotionPreference } from "../../hooks/useReducedMotionPreference";
 import type {
@@ -112,10 +112,10 @@ export function TravelGlobe({
       map.needsUpdate = true;
     }
     return new MeshPhongMaterial({
-      color: surface ? "#f2f7ff" : "#07121f",
+      color: surface ? atlasGlobe.daylight : atlasInks.deep,
       map,
-      emissive: "#071829",
-      specular: "#111a22",
+      emissive: atlasGlobe.emissive,
+      specular: atlasGlobe.specular,
       shininess: 4,
     });
   }, [surface]);
@@ -338,7 +338,7 @@ export function TravelGlobe({
             const feature = asCountryFeature(object);
             const location = getLocation(feature);
             const visual = location ? travelMapVisuals[getTravelMapTier(location)] : null;
-            const baseColor = visual?.fill ?? unvisitedCountryColor;
+            const baseColor = visual?.fill ?? atlasGlobe.unvisited;
             const selected = location && selectedLocation?.isoCode === location.isoCode;
             const hovered = hoveredCode === getFeatureCode(feature);
             const color = selected || hovered
@@ -346,14 +346,14 @@ export function TravelGlobe({
               : baseColor;
             // The mesh remains pickable even where the imagery shows through.
             if (!surface) return color;
-            if (!visual) return hovered ? "rgba(92, 144, 167, 0.13)" : "rgba(20, 34, 54, 0.035)";
+            if (!visual) return hovered ? atlasGlobe.hoverWash : atlasGlobe.landWash;
             return color + visual.textureAlpha;
           }}
-          polygonSideColor={() => "rgba(5, 12, 24, 0.18)"}
+          polygonSideColor={() => atlasGlobe.side}
           polygonStrokeColor={(object) => {
             const feature = asCountryFeature(object);
             const location = getLocation(feature);
-            if (!location) return "rgba(134, 163, 178, 0.28)";
+            if (!location) return atlasGlobe.boundary;
             const borderColor = travelMapVisuals[getTravelMapTier(location)].border;
             if (selectedLocation?.isoCode === location.isoCode) {
               return brightenHexColor(borderColor, 0.16);
@@ -393,8 +393,8 @@ export function TravelGlobe({
           htmlElementVisibilityModifier={updateBeaconVisibility}
           htmlTransitionDuration={0}
           showAtmosphere
-          atmosphereColor="#70c4f2"
-          atmosphereAltitude={0.055}
+          atmosphereColor={atlasGlobe.atmosphere}
+          atmosphereAltitude={0.045}
           animateIn={false}
         />
       ) : (

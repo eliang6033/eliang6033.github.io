@@ -1,3 +1,4 @@
+import { atlasInks } from "../config/atlasTheme";
 import type {
   TravelLocation,
   TravelMapTier,
@@ -171,15 +172,15 @@ export function getTravelMapTier(location: Pick<TravelLocation, "importance">): 
 export const travelMapVisuals = {
   chapter: {
     label: "Key chapters",
-    fill: "#D9A73E",
-    border: "#F0CF72",
+    fill: atlasInks.chapter,
+    border: atlasInks["chapter-edge"],
     altitude: 0.007,
     textureAlpha: "b5",
   },
   visited: {
     label: "Travel visits",
-    fill: "#408BC6",
-    border: "#86C5F4",
+    fill: atlasInks.visited,
+    border: atlasInks["visited-edge"],
     altitude: 0.006,
     textureAlpha: "a8",
   },
@@ -187,8 +188,6 @@ export const travelMapVisuals = {
   TravelMapTier,
   { label: string; fill: string; border: string; altitude: number; textureAlpha: string }
 >;
-
-export const unvisitedCountryColor = "#142236";
 
 export const travelMapTierOrder = ["chapter", "visited"] as const satisfies readonly TravelMapTier[];
 

@@ -90,15 +90,13 @@ html:not(.journey-mode-active), html:not(.journey-mode-active) body { background
 }
 .hero-school { color: var(--folio-muted); margin-top: .18rem; }
 .hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem 1.6rem; margin-top: 1.55rem; }
-.folio-action, .folio-text-link {
+.folio-action {
   display: inline-flex;
   min-height: 44px;
   align-items: center;
   gap: .72rem;
   font-size: .9375rem;
   font-weight: 550;
-}
-.folio-action {
   padding: .6rem 1.05rem;
   border: 1px solid var(--folio-ink);
   background: var(--folio-ink);
@@ -107,13 +105,13 @@ html:not(.journey-mode-active), html:not(.journey-mode-active) body { background
   cursor: pointer;
 }
 .folio-action:hover { background: var(--folio-accent); border-color: var(--folio-accent); }
-.folio-text-link, .social-link, .site-footer__inner a {
+.social-link, .site-footer__inner a {
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: .26em;
   text-decoration-color: #828278;
 }
-.folio-text-link:hover, a.social-link:hover, .site-footer__inner a:hover { color: var(--folio-accent); text-decoration-color: currentColor; }
+a.social-link:hover, .site-footer__inner a:hover { color: var(--folio-accent); text-decoration-color: currentColor; }
 .social-links { display: flex; flex-wrap: wrap; gap: .12rem 1.35rem; align-items: center; }
 .social-link { display: inline-flex; align-items: center; min-height: 40px; gap: .4rem; font-size: .94rem; }
 .social-link svg { width: .91rem; height: .91rem; flex: none; stroke-width: 1.6; }
