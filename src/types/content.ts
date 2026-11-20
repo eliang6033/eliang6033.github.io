@@ -29,6 +29,7 @@ export interface ResearchEntry {
   year?: string;
   title: string;
   authors?: ResearchAuthor[];
+  authorSummary?: { first: number; last: number; omission: string };
   authorNote?: string;
   venue?: string;
   description?: string;

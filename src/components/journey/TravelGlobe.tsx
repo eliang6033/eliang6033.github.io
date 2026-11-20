@@ -6,7 +6,8 @@ import {
   useState,
 } from "react";
 import Globe, { type GlobeMethods } from "react-globe.gl";
-import { MeshPhongMaterial } from "three";
+import { MeshPhongMaterial, SRGBColorSpace, Texture } from "three";
+import { loadEarthSurface } from "../../data/earthSurface";
 import {
   loadCountryFeatures,
   type CountryFeature,
@@ -43,9 +44,9 @@ interface GlobeControls {
 }
 
 const importanceAltitude: Record<TravelImportance, number> = {
-  home: 0.015,
-  "extended-stay": 0.012,
-  visited: 0.009,
+  home: 0.008,
+  "extended-stay": 0.007,
+  visited: 0.006,
 };
 
 function asCountryFeature(value: object): CountryFeature {
@@ -105,20 +106,25 @@ export function TravelGlobe({
   const controlsRef = useRef<GlobeControls | null>(null);
   const resumeTimerRef = useRef<number>();
   const [countries, setCountries] = useState<CountryFeature[]>([]);
+  const [surface, setSurface] = useState<HTMLImageElement | null>(null);
   const [loadError, setLoadError] = useState(false);
   const [loadAttempt, setLoadAttempt] = useState(0);
   const [hoveredCode, setHoveredCode] = useState<string | null>(null);
   const [size, setSize] = useState({ width: 640, height: 640 });
-  const globeMaterial = useMemo(
-    () =>
-      new MeshPhongMaterial({
-        color: "#07121f",
-        emissive: "#020617",
-        emissiveIntensity: 0.18,
-        shininess: 0.35,
-      }),
-    [],
-  );
+  const globeMaterial = useMemo(() => {
+    const map = surface ? new Texture(surface) : null;
+    if (map) {
+      map.colorSpace = SRGBColorSpace;
+      map.needsUpdate = true;
+    }
+    return new MeshPhongMaterial({
+      color: surface ? "#f2f7ff" : "#07121f",
+      map,
+      emissive: "#071829",
+      specular: "#111a22",
+      shininess: 4,
+    });
+  }, [surface]);
   const beaconData = useMemo(() => [singaporeBeacon], []);
 
   const clearResumeTimer = useCallback(() => {
@@ -143,7 +149,10 @@ export function TravelGlobe({
   );
 
   useEffect(
-    () => () => globeMaterial.dispose(),
+    () => () => {
+      globeMaterial.map?.dispose();
+      globeMaterial.dispose();
+    },
     [globeMaterial],
   );
 
@@ -151,9 +160,12 @@ export function TravelGlobe({
     let active = true;
     setLoadError(false);
 
-    loadCountryFeatures()
-      .then((features) => {
-        if (active) setCountries(features);
+    Promise.all([loadCountryFeatures(), loadEarthSurface().catch(() => null)])
+      .then(([features, image]) => {
+        if (active) {
+          setSurface(image);
+          setCountries(features);
+        }
       })
       .catch(() => {
         if (active) setLoadError(true);
@@ -213,6 +225,11 @@ export function TravelGlobe({
     if (!globe || countries.length === 0) return;
 
     const controls = globe.controls() as unknown as GlobeControls;
+    const sunlight = globe.lights().find(light => light.type === "DirectionalLight");
+    if (sunlight) {
+      sunlight.position.set(-3, 4, 3);
+      sunlight.intensity = 2.1;
+    }
     controlsRef.current = controls;
     controls.autoRotate = true;
     controls.autoRotateSpeed = 0.36;
@@ -327,19 +344,21 @@ export function TravelGlobe({
             const baseColor = location
               ? travelImportanceVisuals[location.importance].fill
               : unvisitedCountryColor;
-            if (selectedLocation?.isoCode === location?.isoCode) {
-              return brightenHexColor(baseColor, 0.17);
-            }
-            if (hoveredCode === getFeatureCode(feature)) {
-              return brightenHexColor(baseColor, 0.09);
-            }
-            return baseColor;
+            const selected = location && selectedLocation?.isoCode === location.isoCode;
+            const hovered = hoveredCode === getFeatureCode(feature);
+            const color = selected || hovered
+              ? brightenHexColor(baseColor, selected ? 0.17 : 0.09)
+              : baseColor;
+            // The mesh remains pickable even where the imagery shows through.
+            if (!surface) return color;
+            if (!location) return hovered ? "rgba(92, 144, 167, 0.13)" : "rgba(20, 34, 54, 0.035)";
+            return color + (location.importance === "visited" ? "a8" : "c4");
           }}
-          polygonSideColor={() => "rgba(5, 12, 24, 0.82)"}
+          polygonSideColor={() => "rgba(5, 12, 24, 0.18)"}
           polygonStrokeColor={(object) => {
             const feature = asCountryFeature(object);
             const location = getLocation(feature);
-            if (!location) return "rgba(69, 98, 126, 0.38)";
+            if (!location) return "rgba(134, 163, 178, 0.28)";
             const borderColor = travelImportanceVisuals[location.importance].border;
             if (selectedLocation?.isoCode === location.isoCode) {
               return brightenHexColor(borderColor, 0.16);
@@ -355,7 +374,7 @@ export function TravelGlobe({
             const baseAltitude = location
               ? importanceAltitude[location.importance]
               : 0.004;
-            if (selectedLocation?.isoCode === location?.isoCode) {
+            if (location && selectedLocation?.isoCode === location.isoCode) {
               return baseAltitude + 0.008;
             }
             if (hoveredCode === getFeatureCode(feature)) {
@@ -379,8 +398,8 @@ export function TravelGlobe({
           htmlElementVisibilityModifier={updateBeaconVisibility}
           htmlTransitionDuration={0}
           showAtmosphere
-          atmosphereColor="#22d3ee"
-          atmosphereAltitude={0.14}
+          atmosphereColor="#70c4f2"
+          atmosphereAltitude={0.055}
           animateIn={false}
         />
       ) : (

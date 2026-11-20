@@ -21,7 +21,7 @@ export function About() {
     },
     {
       icon: Plane,
-      value: countriesVisited ?? travelStats[0].value,
+      value: countriesVisited,
       label: content.facts.countries.label,
     },
   ];
@@ -29,26 +29,25 @@ export function About() {
   return (
     <section className="section section--about" id="about">
       <SectionReveal>
-        <div className="shell about-layout">
-          <div>
-            <SectionHeading eyebrow={content.eyebrow} title={content.title} />
+        <div className="shell">
+          <SectionHeading eyebrow={content.eyebrow} title={content.title} />
+          <div className="about-layout">
             <div className="about-copy">
               {content.paragraphs.map((paragraph) => (
                 <p key={paragraph}>{paragraph}</p>
               ))}
             </div>
-          </div>
-
-          <div className="about-facts">
-            {facts.map(({ icon: Icon, value, label }) => (
-              <article className="about-fact" key={label}>
-                <span className="about-fact__icon">
-                  <Icon aria-hidden="true" size={19} />
-                </span>
-                <strong>{value}</strong>
-                <span>{label}</span>
-              </article>
-            ))}
+            <dl className="about-facts">
+              {facts.map(({ icon: Icon, value, label }) => (
+                <div className="about-fact" key={label}>
+                  <dt>
+                    <Icon aria-hidden="true" size={16} />
+                    {label}
+                  </dt>
+                  <dd>{value}</dd>
+                </div>
+              ))}
+            </dl>
           </div>
         </div>
       </SectionReveal>

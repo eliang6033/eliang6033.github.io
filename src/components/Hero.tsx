@@ -56,7 +56,6 @@ export function Hero({ onOpenJourney, onPreloadJourney }: HeroProps) {
         </h1>
         <p className="hero-degree">{content.degrees}</p>
         <p className="hero-school">{content.school}</p>
-        <p className="hero-intro">{content.introduction}</p>
 
         <div className="hero-actions">
           <button

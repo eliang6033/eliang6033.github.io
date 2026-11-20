@@ -30,8 +30,6 @@ export const siteContent = {
     name: "Qifeng(Eli) Liang",
     degrees: "Mathematics–Computer Science & Cognitive Science",
     school: "University of California San Diego",
-    introduction:
-      "I study artificial intelligence, robotics, and world models, with a focus on how intelligent systems learn to understand and interact with the physical world.",
     primaryAction: "Explore My Journey",
     secondaryAction: "View My Work",
     visualLabel: "Ideas in motion",
@@ -61,9 +59,7 @@ export const siteContent = {
   },
   projects: {
     eyebrow: "02 · Research & Internship",
-    title: "Questions worth building toward.",
-    introduction:
-      "I am interested in systems that can reason about the physical world, act safely within it, and keep learning from experience.",
+    title: "Research & Internship",
     cardAriaPrefix: "Research and internship item:",
   },
   journeyPreview: {
@@ -77,8 +73,6 @@ export const siteContent = {
   hobbies: {
     eyebrow: "04 · Beyond Research",
     title: "Beyond Research",
-    introduction:
-      "The things I return to when I am not reading papers, writing code, or thinking about robots.",
   },
   contact: {
     eyebrow: "05 · Contact",
@@ -135,7 +129,7 @@ export const socialLinks: SocialLink[] = [
     icon: "linkedin",
   },
   { label: "Email", href: "mailto:eliliang6033@gmail.com", icon: "email" },
-  { label: "Resume", href: "YOUR_RESUME_URL", icon: "resume" },
+  { label: "Resume", href: "/resume.pdf", icon: "resume" },
 ];
 
 /**

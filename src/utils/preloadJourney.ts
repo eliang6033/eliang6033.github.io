@@ -1,4 +1,5 @@
 import { preloadCountryFeatures } from "../data/countryGeometry";
+import { loadEarthSurface } from "../data/earthSurface";
 
 let journeyModePromise: ReturnType<typeof importJourneyMode> | null = null;
 let travelGlobePromise: ReturnType<typeof importTravelGlobe> | null = null;
@@ -42,5 +43,6 @@ export function preloadJourneyExperience() {
     loadJourneyMode(),
     loadTravelGlobe(),
     preloadCountryFeatures(),
+    loadEarthSurface(),
   ]);
 }

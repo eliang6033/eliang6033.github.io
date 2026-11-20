@@ -31,31 +31,21 @@ export function Hobbies() {
     <section className="section section--hobbies" id="hobbies">
       <SectionReveal>
         <div className="shell">
-          <SectionHeading
-            eyebrow={content.eyebrow}
-            title={content.title}
-            introduction={content.introduction}
-          />
-          <div className="hobby-grid">
-            {hobbies.map((hobby, index) => {
+          <SectionHeading eyebrow={content.eyebrow} title={content.title} />
+          <ul className="hobby-list" role="list">
+            {hobbies.map((hobby) => {
               const Icon = hobbyIcons[hobby.icon];
               return (
-                <article
-                  className={`hobby-card hobby-card--${hobby.accent}`}
+                <li
+                  className={`hobby-item hobby-item--${hobby.accent}`}
                   key={hobby.title}
                 >
-                  <span className="hobby-card__number" aria-hidden="true">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <span className="hobby-card__icon">
-                    <Icon aria-hidden="true" size={25} strokeWidth={1.7} />
-                  </span>
-                  <h3>{hobby.title}</h3>
-                  <span className="hobby-card__line" aria-hidden="true" />
-                </article>
+                  <Icon aria-hidden="true" size={20} strokeWidth={1.7} />
+                  <span>{hobby.title}</span>
+                </li>
               );
             })}
-          </div>
+          </ul>
         </div>
       </SectionReveal>
     </section>

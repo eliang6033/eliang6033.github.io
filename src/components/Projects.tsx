@@ -8,7 +8,7 @@ import {
   researchCategory,
   researchEntries,
 } from "../data/projects";
-import type { EntryLink } from "../types/content";
+import type { EntryLink, ResearchAuthor, ResearchEntry } from "../types/content";
 import { useReducedMotionPreference } from "../hooks/useReducedMotionPreference";
 import { SectionHeading } from "./SectionHeading";
 import { SectionReveal } from "./SectionReveal";
@@ -48,6 +48,41 @@ function EntryLinks({ links }: { links: EntryLink[] }) {
   );
 }
 
+function AuthorNames({ authors, continued = false }: { authors: ResearchAuthor[]; continued?: boolean }) {
+  return authors.map((author, index) => (
+    <Fragment key={author.name}>
+      <span className="project-entry__author">
+        {author.highlight ? <strong>{author.name}</strong> : author.name}
+        {author.marker ? <sup>{author.marker}</sup> : null}
+        {index < authors.length - 1 || continued ? "," : null}
+      </span>
+      {index < authors.length - 1 ? " " : null}
+    </Fragment>
+  ));
+}
+
+function AuthorByline({ authors = [], authorSummary }: Pick<ResearchEntry, "authors" | "authorSummary">) {
+  if (!authors.length) return null;
+  const summary = authorSummary && authors.length > authorSummary.first + authorSummary.last
+    ? authorSummary
+    : null;
+
+  return (
+    <p className="project-entry__authors">
+      {summary ? (
+        <>
+          <span className="project-entry__author-row">
+            <AuthorNames authors={authors.slice(0, summary.first)} continued />
+          </span>{" "}
+          <span className="project-entry__author-row">
+            <em>{summary.omission}</em>, <AuthorNames authors={authors.slice(-summary.last)} />
+          </span>
+        </>
+      ) : <AuthorNames authors={authors} />}
+    </p>
+  );
+}
+
 export function Projects() {
   const content = siteContent.projects;
   const reduceMotion = useReducedMotionPreference();
@@ -59,7 +94,6 @@ export function Projects() {
           <SectionHeading
             eyebrow={content.eyebrow}
             title={content.title}
-            introduction={content.introduction}
           />
           <div className="project-grid">
             <motion.article
@@ -86,24 +120,7 @@ export function Projects() {
                         <span className="project-entry__year">{entry.year}</span>
                       ) : null}
                       <h4 className="project-entry__title">{entry.title}</h4>
-                      {entry.authors?.length ? (
-                        <p className="project-entry__authors">
-                          {entry.authors.map((author, index, authors) => (
-                            <Fragment key={author.name}>
-                              <span className="project-entry__author">
-                                {author.highlight ? (
-                                  <strong>{author.name}</strong>
-                                ) : (
-                                  author.name
-                                )}
-                                {author.marker ? <sup>{author.marker}</sup> : null}
-                                {index < authors.length - 1 ? "," : null}
-                              </span>
-                              {index < authors.length - 1 ? " " : null}
-                            </Fragment>
-                          ))}
-                        </p>
-                      ) : null}
+                      <AuthorByline authors={entry.authors} authorSummary={entry.authorSummary} />
                       {entry.authorNote ? (
                         <p className="project-entry__author-note">
                           {entry.authorNote}
