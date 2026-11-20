@@ -1,6 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import { siteContent } from "../config/siteContent";
-import armPlate from "../assets/folio/arm-study.svg";
+import portrait from "../assets/folio/eli-windmills.jpg";
 import { SocialLinks } from "./SocialLinks";
 
 interface HeroProps {
@@ -33,8 +33,8 @@ export function Hero({ onOpenJourney, onPreloadJourney }: HeroProps) {
         </div>
         <SocialLinks />
       </div>
-      <figure className="folio-plate" aria-label={content.visualLabel}>
-        <img className="folio-plate__drawing" src={armPlate} width="516" height="380" alt="" />
+      <figure className="folio-plate">
+        <img className="folio-plate__portrait" src={portrait} width="1024" height="1536" alt={content.portraitAlt} />
         <figcaption>
           <span className="folio-plate__title">{content.visualCenterLabel}</span>
           <ul role="list">{content.visualNodes.map(label => <li key={label}>{label}</li>)}</ul>

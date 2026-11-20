@@ -32,7 +32,7 @@ export const siteContent = {
     school: "University of California San Diego",
     primaryAction: "Explore My Journey",
     secondaryAction: "View My Work",
-    visualLabel: "Ideas in motion",
+    portraitAlt: "Qifeng (Eli) Liang in front of windmills.",
     visualCenterLabel: "Intelligence",
     visualNodes: ["AI", "Robotics", "World Models", "Travel"],
   },

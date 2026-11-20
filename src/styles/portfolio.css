@@ -122,7 +122,10 @@ html:not(.journey-mode-active), html:not(.journey-mode-active) body { background
 .social-links--buttons .social-link { min-height: 44px; }
 
 .folio-plate { margin: 0; width: 100%; max-width: 32.5rem; justify-self: end; }
-.folio-plate__drawing { display: block; width: 100%; height: auto; }
+.folio-plate__portrait {
+  display: block; width: 100%; height: auto; aspect-ratio: 516 / 380;
+  object-fit: cover; object-position: center 23%;
+}
 .folio-plate figcaption {
   margin-top: .25rem; padding-top: .8rem;
   border-top: 1px solid var(--folio-rule);
@@ -161,7 +164,7 @@ html:not(.journey-mode-active), html:not(.journey-mode-active) body { background
   .hero-actions { gap: .45rem 1.15rem; margin-top: 1.2rem; }
   .social-links--compact { margin-top: .5rem; column-gap: 1rem; }
   .folio-plate { width: min(100%, 30rem); justify-self: center; }
-  .folio-plate__drawing { max-height: 14rem; }
+  .folio-plate__portrait { max-height: 14rem; }
   .folio-plate figcaption { flex-direction: row; padding-top: .55rem; }
 }
 @media (max-width: 360px) {
